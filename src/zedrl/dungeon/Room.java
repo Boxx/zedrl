@@ -8,23 +8,23 @@ package zedrl.dungeon;
  *
  * @author Brandon
  */
-public class Cell
+public class Room
 {
-
+    private boolean isConnected;
     private int topLeftRow;
     private int topLeftCol;
     private int botRightRow;
     private int botRightCol;
-    private boolean isRoom;
 
-    public Cell(int topLeftRow, int topLeftCol, int botRightRow, int botRightCol)
+    public Room(int topLeftRow, int topLeftCol, int botRightRow, int botRightCol)
     {
         this.topLeftRow = topLeftRow;
         this.topLeftCol = topLeftCol;
         this.botRightRow = botRightRow;
         this.botRightCol = botRightCol;
     }
-
+    
+    
     public int getBotRightCol()
     {
         return botRightCol;
@@ -35,9 +35,9 @@ public class Cell
         return botRightRow;
     }
 
-    public boolean isRoom()
+    public boolean isIsConnected()
     {
-        return isRoom;
+        return isConnected;
     }
 
     public int getTopLeftCol()
@@ -49,8 +49,10 @@ public class Cell
     {
         return topLeftRow;
     }
-    public void setRoom()
+
+    public void setIsConnected(boolean isConnected)
     {
-        isRoom = true;
+        this.isConnected = isConnected;
     }
+    
 }

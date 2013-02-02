@@ -1,62 +1,57 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package zedrl.dungeon;
 
 /**
  *
  * @author Brandon
  */
-public class DungeonBuilder
-{
+public class DungeonBuilder {
 
     private Tile[][] dungeon;
-    private Cell[][] cells;
-    private Room[] rooms;
     private int dungeonWidth;
     private int dungeonHeight;
-    private int cellsWidth;
     private int cellsHeight;
-    private int cellCount;
-    private int ROOM_THRESHHOLD;
-    private int ROOM_MIN;
-    private int numberOfRooms = 0;
+    private int cellsWidth;
+    private int cellSize;
 
     // ROW, COLUMN
-    public DungeonBuilder(int height, int width, int cellSize)
-    {
-
+    /**
+     * Constructor that takes in desired dungeon size and cell structure for
+     * the grid segmentations
+     * 
+     * @param height
+     * @param width
+     * @param cellSize 
+     */
+    public DungeonBuilder(int height, int width, int cellSize) {
         this.dungeonWidth = width;
         this.dungeonHeight = height;
-        cellsWidth = width / cellSize;
-        cellsHeight = height / cellSize;
-        dungeon = new Tile[height][width];
-        cellCount = cellsWidth * cellsHeight;
-        ROOM_MIN = (int) (.3 * cellCount);
-        ROOM_THRESHHOLD = (int) (.5 * cellCount);
-        while (numberOfRooms <= ROOM_MIN || numberOfRooms >= ROOM_THRESHHOLD)
-        {
-            numberOfRooms = (int) (Math.random() * cellCount);
-        }
-
-        cells = new Cell[cellsHeight][cellsWidth];
-        cells = buildCells(cellSize);
-        buildRoomList();
-
+        this.cellSize = cellSize;
     }
 
-    // Generate a random number from 0 to 1/2 # of CELLS
-    // That's how many rooms we want
-    // Then for i = 0 up to randomRoomNumber, generate
-    // a random number and the corresponding cell will be a ROOM
-    // Then fill out the room with trash and Roshans
-    private Cell[][] buildCells(int cellSize)
-    {
-        for (int i = 0; i < dungeonHeight; i += cellSize)
-        {
-            for (int j = 0; j < dungeonWidth; j += cellSize)
-            {
+    /**
+     * Builder method that constructs a dungeon using the "component" methods
+     * @return returns a dungeon and list of rooms
+     */
+    public Dungeon build() {
+        dungeon = new Tile[dungeonHeight][dungeonWidth];
+        Cell[][] cells = buildCells(cellSize);
+        Room[] roomList = buildRoomList(cells);
+        dungeon = buildDungeon(roomList);
+        return new Dungeon(dungeon,roomList);
+    }
+    /**
+     * 
+     * @param cellSize
+     * @return returns a grid of cells
+     */
+    private Cell[][] buildCells(int cellSize) {
+        cellsWidth = dungeonWidth / cellSize;
+        cellsHeight = dungeonHeight / cellSize;
+        Cell[][] cells = new Cell[cellsHeight][cellsWidth];
+
+        for (int i = 0; i < dungeonHeight; i += cellSize) {
+            for (int j = 0; j < dungeonWidth; j += cellSize) {
 
                 cells[i / cellSize][j / cellSize] = new Cell(i, j, i + cellSize - 1,
                         j + cellSize - 1);
@@ -67,19 +62,113 @@ public class DungeonBuilder
         return cells;
     }
 
-    public void printCells()
-    {
-        System.out.println("Cell Count: " + cells[0].length);
-        for (int i = 0; i < cells.length; i++)
-        {
+    /**
+     * Takes in the cell grid and randomly selects cells as room candidates
+     * Populates a room list with these cells
+     * 
+     * @param cells
+     * @return returns a list of rooms
+     */
+    public Room[] buildRoomList(Cell[][] cells) {
+        int cellCount = cellsWidth * cellsHeight;
+        int ROOM_MIN = (int) (.3 * cellCount);
+        int ROOM_THRESHHOLD = (int) (.5 * cellCount);
+        int numberOfRooms = 0;
+        while (numberOfRooms <= ROOM_MIN || numberOfRooms >= ROOM_THRESHHOLD) {
+            numberOfRooms = (int) (Math.random() * cellCount);
+        }
+        Room[] rooms = new Room[numberOfRooms];
+        int roomCounter = 0;
+        while (roomCounter != numberOfRooms) {
+            Cell curCell = cells[(int) (Math.random() * cellsHeight)][(int) (Math.random() * cellsWidth)];
+            if (curCell.isRoom()) {
+            } else {
+                rooms[roomCounter] = new Room(curCell.getTopLeftRow(), curCell.getTopLeftCol(), curCell.getBotRightRow(), curCell.getBotRightCol());
+                curCell.setRoom();
+                roomCounter++;
+            }
+        }
+        return rooms;
+    }
 
-            for (int j = 0; j < cells[0].length; j++)
-            {
-                if (cells[i][j] == null)
-                {
+    /**
+     * Digs the dungeon, rooms, and corridors
+     * 
+     * @param roomList
+     * @return returns a dungeon
+     */
+    public Tile[][] buildDungeon(Room[] roomList) {
+
+        /*
+         * Iterate through dungeon and set all tiles to OOB initially
+         */
+        for (int i = 0; i < dungeon.length; i++) {
+
+            for (int j = 0; j < dungeon[0].length; j++) {  
+                dungeon[i][j] = Tile.OOB;
+            }
+        }
+        
+        /*
+         * This loop runs through the room list and digs out all the rooms
+         * Future plans: use different ASCII characters to make rooms prettier
+         * 
+         */
+        for (int i = 0; i < roomList.length; i++) { // Room list iterator
+
+            for (int j = roomList[i].getTopLeftRow(); j <= roomList[i].getBotRightRow(); j++) {  // Dungeon rows
+
+                for (int k = roomList[i].getTopLeftCol(); k <= roomList[i].getBotRightCol(); k++) {  // Dungeon columns
+
+                    if (j == roomList[i].getTopLeftRow() || j == roomList[i].getBotRightRow()) {  // Handles the top and bottom sides of the rect
+                        
+                        dungeon[k][j] = Tile.WALL;
+                    } else if (k == roomList[i].getTopLeftCol() || k == roomList[i].getBotRightCol()) { // Left and Right
+                        dungeon[k][j] = Tile.WALL;
+                    } else {
+                        dungeon[k][j] = Tile.FLOOR;
+                    }
+                }
+            }
+        }
+        return dungeon;
+    }
+
+ 
+    public void printDungeon() {
+        for (int i = 0; i < dungeon.length; i++) {
+
+            for (int j = 0; j < dungeon[0].length; j++) {
+                System.out.print(dungeon[i][j].getGlyph());
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * 
+     * @param rooms
+     */
+    public void printRooms(Room[] rooms) {
+        System.out.println("Inside printRooms method");
+        System.out.println(rooms.length);
+        for (int i = 0; i < rooms.length; i++) {
+            System.out.println("Room " + i + ": " + rooms[i].getTopLeftCol() + "," + rooms[i].getTopLeftRow());
+        }
+    }
+
+    /**
+     * 
+     * @param cells
+     */
+    public void printCells(Cell[][] cells) {
+        System.out.println("Cell Count: " + cells[0].length);
+        for (int i = 0; i < cells.length; i++) {
+
+            for (int j = 0; j < cells[0].length; j++) {
+                if (cells[i][j] == null) {
                     System.out.println("Null at " + i + "," + j);
-                } else
-                {
+                } else {
                     System.out.println("Top Left: " + cells[i][j].getTopLeftRow() + ","
                             + cells[i][j].getTopLeftCol() + " Bottom Right: "
                             + cells[i][j].getBotRightRow() + ","
@@ -90,73 +179,23 @@ public class DungeonBuilder
         }
     }
 
-    public Room[] buildRoomList()
-    {
-        rooms = new Room[numberOfRooms];
-        System.out.println("Inside selectRooms method");
-        System.out.println("numberOfRooms = " + numberOfRooms);
-        int roomCounter = 0;
-        while (roomCounter != numberOfRooms)
-        {
-            Cell curCell = cells[(int) (Math.random() * cellsHeight)][(int) (Math.random() * cellsHeight)];
-            if (curCell.isRoom())
-            {
-            } else
-            {
-                System.out.println("Room Counter: " + roomCounter);
-                rooms[roomCounter] = new Room(curCell.getTopLeftRow(), curCell.getTopLeftCol(), curCell.getBotRightRow(), curCell.getBotRightCol());
-                curCell.setRoom();
-                roomCounter++;
-            }
-        }
-        return rooms;
-    }
-
-    public void printRooms()
-    {
-        System.out.println("Inside printRooms method");
-        System.out.println(rooms.length);
-        for (int i = 0; i < rooms.length; i++)
-        {
-            System.out.println("Room " + i + ": " + rooms[i].getTopLeftCol() + "," + rooms[i].getTopLeftRow());
-        }
-    }
-
-    public int numberOfRooms()
-    {
-        numberOfRooms = (int) Math.random() * cells.length;
-        return numberOfRooms;
-    }
-
-    public int getNumberOfRooms()
-    {
-        return numberOfRooms;
-    }
-
-    public Tile[][] returnProduct()
-    {
-
-        return dungeon;
-
-    }
-
-    public int getWidth()
-    {
+    /**
+     * 
+     * @return
+     */
+    public int getWidth() {
 
         return dungeonWidth;
 
     }
 
-    public int getHeight()
-    {
+    /**
+     * 
+     * @return
+     */
+    public int getHeight() {
 
         return dungeonHeight;
 
     }
-    // need a way to generate a random-sized room
-    // (random height/width less than cell width)
-    // so:
-    // Divide the array up into cells of some height/width
-    // We have a "cell" Object that we create which has
-    // the boundary locations of the cell in it
 }

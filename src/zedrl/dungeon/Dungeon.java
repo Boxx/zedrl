@@ -10,40 +10,36 @@ import java.awt.Color;
  *
  * @author Brandon
  */
-public class Dungeon
-{
+public class Dungeon {
 
     private Tile[][] tiles;
+    private Room[] roomList;
     private int width;
     private int height;
 
-    public int getHeight()
-    {
+    public int getHeight() {
         return height;
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         return width;
     }
 
-    public Dungeon(Tile[][] tiles)
-    {
+    public Dungeon(Tile[][] tiles, Room[] roomList) {
         this.tiles = tiles;
+        this.roomList = roomList;
         this.width = tiles.length;
         this.height = tiles[0].length;
+        
     }
     /*
      * Method for getting a tile at a given position while checking its bounds
      */
 
-    public Tile tile(int x, int y)
-    {
-        if (x < 0 || x >= width || y < 0 || y >= height)
-        {
+    public Tile tile(int x, int y) {
+        if (x < 0 || x >= width || y < 0 || y >= height) {
             return Tile.OOB;
-        } else
-        {
+        } else {
             return tiles[x][y];
         }
     }
@@ -51,16 +47,14 @@ public class Dungeon
      * Returns the tile glyph at a given position
      */
 
-    public char glyph(int x, int y)
-    {
+    public char glyph(int x, int y) {
         return tile(x, y).getGlyph();
     }
     /*
      * Returns the tile color at a given position
      */
 
-    public Color color(int x, int y)
-    {
+    public Color color(int x, int y) {
         return tile(x, y).getColor();
     }
 }

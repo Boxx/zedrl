@@ -17,8 +17,8 @@ public class DungeonTest
     {
         // Begin DungeonBuilder test case #1
         {
-            DungeonBuilder db = new DungeonBuilder(50, 50, 10);
-            db.printRooms();
+            
+
         }
     }
 }

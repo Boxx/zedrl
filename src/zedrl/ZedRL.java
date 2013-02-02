@@ -28,7 +28,6 @@ public class ZedRL extends JFrame implements KeyListener
     {
         super();
         term = new AsciiPanel();
-        term.write("Zed RL", 1, 1);
         add(term);
         pack();
         screen = new StartScreen();
@@ -36,6 +35,12 @@ public class ZedRL extends JFrame implements KeyListener
         repaint();
     }
 
+    @Override
+    public void repaint() {
+        term.clear();
+        screen.displayOutput(term);
+        super.repaint();
+    }
     @Override
     public void keyTyped(KeyEvent e)
     {
@@ -46,7 +51,8 @@ public class ZedRL extends JFrame implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        screen = screen.respondToUserInput(e);
+        repaint();
     }
 
     @Override

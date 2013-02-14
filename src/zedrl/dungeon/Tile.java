@@ -15,7 +15,7 @@ public enum Tile
 {
 
     FLOOR((char) 250, AsciiPanel.yellow),
-    WALL((char) 177, AsciiPanel.yellow),
+    WALL((char) 177, AsciiPanel.white),
     OOB('x', AsciiPanel.brightBlack);
     private char glyph;
     private Color color;

@@ -1,5 +1,6 @@
-
 package zedrl.dungeon;
+
+import zedrl.utilities.Roller;
 
 /**
  *
@@ -16,12 +17,12 @@ public class DungeonBuilder {
 
     // ROW, COLUMN
     /**
-     * Constructor that takes in desired dungeon size and cell structure for
-     * the grid segmentations
-     * 
+     * Constructor that takes in desired dungeon size and cell structure for the
+     * grid segmentations
+     *
      * @param height
      * @param width
-     * @param cellSize 
+     * @param cellSize
      */
     public DungeonBuilder(int height, int width, int cellSize) {
         this.dungeonWidth = width;
@@ -31,6 +32,7 @@ public class DungeonBuilder {
 
     /**
      * Builder method that constructs a dungeon using the "component" methods
+     *
      * @return returns a dungeon and list of rooms
      */
     public Dungeon build() {
@@ -38,10 +40,11 @@ public class DungeonBuilder {
         Cell[][] cells = buildCells(cellSize);
         Room[] roomList = buildRoomList(cells);
         dungeon = buildDungeon(roomList);
-        return new Dungeon(dungeon,roomList);
+        return new Dungeon(dungeon, roomList);
     }
+
     /**
-     * 
+     *
      * @param cellSize
      * @return returns a grid of cells
      */
@@ -65,7 +68,7 @@ public class DungeonBuilder {
     /**
      * Takes in the cell grid and randomly selects cells as room candidates
      * Populates a room list with these cells
-     * 
+     *
      * @param cells
      * @return returns a list of rooms
      */
@@ -93,7 +96,7 @@ public class DungeonBuilder {
 
     /**
      * Digs the dungeon, rooms, and corridors
-     * 
+     *
      * @param roomList
      * @return returns a dungeon
      */
@@ -104,15 +107,15 @@ public class DungeonBuilder {
          */
         for (int i = 0; i < dungeon.length; i++) {
 
-            for (int j = 0; j < dungeon[0].length; j++) {  
-                dungeon[i][j] = Tile.OOB;
+            for (int j = 0; j < dungeon[0].length; j++) {
+                dungeon[i][j] = Tile.WALL;
             }
         }
-        
+
         /*
          * This loop runs through the room list and digs out all the rooms
          * Future plans: use different ASCII characters to make rooms prettier
-         * 
+         *
          */
         for (int i = 0; i < roomList.length; i++) { // Room list iterator
 
@@ -121,7 +124,7 @@ public class DungeonBuilder {
                 for (int k = roomList[i].getTopLeftCol(); k <= roomList[i].getBotRightCol(); k++) {  // Dungeon columns
 
                     if (j == roomList[i].getTopLeftRow() || j == roomList[i].getBotRightRow()) {  // Handles the top and bottom sides of the rect
-                        
+
                         dungeon[k][j] = Tile.WALL;
                     } else if (k == roomList[i].getTopLeftCol() || k == roomList[i].getBotRightCol()) { // Left and Right
                         dungeon[k][j] = Tile.WALL;
@@ -131,10 +134,50 @@ public class DungeonBuilder {
                 }
             }
         }
+
+        for (int i = 0; i < roomList.length - 1; i++) {
+            
+            /*
+            int startX = Roller.randomInt(roomList[i].getTopLeftCol(), roomList[i].getBotRightCol());
+            int startY = Roller.randomInt(roomList[i].getTopLeftRow(), roomList[i].getBotRightRow());
+            int targetX = Roller.randomInt(roomList[i + 1].getTopLeftCol(), roomList[i + 1].getBotRightCol());
+            int targetY = Roller.randomInt(roomList[i + 1].getTopLeftRow(), roomList[i + 1].getBotRightRow());
+            */
+            
+            int startX = roomList[i].getTopLeftCol() + (roomList[i].getBotRightCol() - roomList[i].getTopLeftCol())/2;
+            int startY = roomList[i].getTopLeftRow() + (roomList[i].getBotRightRow() - roomList[i].getTopLeftRow())/2;
+            int targetX = roomList[i+1].getTopLeftCol() + (roomList[i+1].getBotRightCol() - roomList[i+1].getTopLeftCol())/2;
+            int targetY = roomList[i+1].getTopLeftRow() + (roomList[i+1].getBotRightRow() - roomList[i+1].getTopLeftRow())/2;
+            
+            System.out.println(startX);System.out.println(startY);System.out.println(targetX);System.out.println(targetY);
+            if (startY < targetY){
+                for(;startY < targetY; startY++){
+                    dungeon[startX][startY] = Tile.FLOOR;
+                }
+            }
+            if (startY > targetY){
+                for(;startY > targetY; startY--){
+                    dungeon[startX][startY] = Tile.FLOOR;
+                }
+            }
+            if (startX < targetX){
+                for(;startX < targetX; startX++){
+                    dungeon[startX][targetY] = Tile.FLOOR;
+                }
+            }
+            if (startX > targetX){
+                for(;startX > targetX; startX--){
+                    dungeon[startX][targetY] = Tile.FLOOR;
+                }
+            }
+            if (startX == targetX && startY == targetY){
+                roomList[i].setIsConnected(true);
+                roomList[i+1].setIsConnected(true); 
+            }
+        }
         return dungeon;
     }
 
- 
     public void printDungeon() {
         for (int i = 0; i < dungeon.length; i++) {
 
@@ -146,7 +189,7 @@ public class DungeonBuilder {
     }
 
     /**
-     * 
+     *
      * @param rooms
      */
     public void printRooms(Room[] rooms) {
@@ -158,7 +201,7 @@ public class DungeonBuilder {
     }
 
     /**
-     * 
+     *
      * @param cells
      */
     public void printCells(Cell[][] cells) {
@@ -180,7 +223,7 @@ public class DungeonBuilder {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public int getWidth() {
@@ -190,7 +233,7 @@ public class DungeonBuilder {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public int getHeight() {
@@ -198,4 +241,5 @@ public class DungeonBuilder {
         return dungeonHeight;
 
     }
+
 }

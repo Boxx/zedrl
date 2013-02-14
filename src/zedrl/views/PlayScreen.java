@@ -23,7 +23,7 @@ class PlayScreen implements Screen {
 
     public PlayScreen() {
         screenW = 50;
-        screenH = 21;
+        screenH = 20;
         createDungeon();
     }
 
@@ -47,8 +47,7 @@ class PlayScreen implements Screen {
         int top = getScrollY();
         displayDungeon(term, left, top);
         term.write('X', cX - left, cY - top);
-        term.write("LOOK AT ALL THE FUN YOU ARE HAVING!", 1, 1);
-        term.writeCenter("[Esc] kills you and pressing [ENTER] will win the game!", 22);
+       
     }
 
     private void scrollByAmount(int x, int y) {

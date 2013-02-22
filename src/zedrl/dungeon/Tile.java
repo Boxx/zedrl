@@ -35,4 +35,7 @@ public enum Tile
         this.glyph = glyph;
         this.color = color;
     }
+    public boolean isPassable(){
+        return this != WALL && this != OOB;
+    }
 }

@@ -149,7 +149,7 @@ public class DungeonBuilder {
             int targetX = roomList[i+1].getTopLeftCol() + (roomList[i+1].getBotRightCol() - roomList[i+1].getTopLeftCol())/2;
             int targetY = roomList[i+1].getTopLeftRow() + (roomList[i+1].getBotRightRow() - roomList[i+1].getTopLeftRow())/2;
             
-            System.out.println(startX);System.out.println(startY);System.out.println(targetX);System.out.println(targetY);
+            
             if (startY < targetY){
                 for(;startY < targetY; startY++){
                     dungeon[startX][startY] = Tile.FLOOR;

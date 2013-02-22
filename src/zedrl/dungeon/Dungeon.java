@@ -5,6 +5,8 @@
 package zedrl.dungeon;
 
 import java.awt.Color;
+import zedrl.actors.Actor;
+import zedrl.utilities.Roller;
 
 /**
  *
@@ -23,6 +25,21 @@ public class Dungeon {
 
     public int getWidth() {
         return width;
+    }
+    public void addActor(Actor actor){
+        int x;
+        int y;
+        
+        do{
+            x = (int)(Math.random() * width);
+            y = (int)(Math.random() * height);
+            System.out.println(x);
+            System.out.println(y);
+        }
+        while(!tile(x,y).isPassable());
+        
+        actor.setPosX(x);
+        actor.setPosY(y);
     }
 
     public Dungeon(Tile[][] tiles, Room[] roomList) {

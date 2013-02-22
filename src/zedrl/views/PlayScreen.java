@@ -6,6 +6,8 @@ package zedrl.views;
 
 import asciiPanel.AsciiPanel;
 import java.awt.event.KeyEvent;
+import zedrl.actors.Actor;
+import zedrl.actors.ActorBuilder;
 import zedrl.dungeon.Dungeon;
 import zedrl.dungeon.DungeonBuilder;
 
@@ -16,6 +18,7 @@ import zedrl.dungeon.DungeonBuilder;
 class PlayScreen implements Screen {
 
     private Dungeon dungeon;
+    private Actor player;
     private int cX;
     private int cY;
     private int screenW;
@@ -25,6 +28,8 @@ class PlayScreen implements Screen {
         screenW = 50;
         screenH = 20;
         createDungeon();
+        ActorBuilder ab = new ActorBuilder(dungeon);
+        player = ab.newPlayer();
     }
 
     private void createDungeon() {
@@ -46,7 +51,8 @@ class PlayScreen implements Screen {
         int left = getScrollX();
         int top = getScrollY();
         displayDungeon(term, left, top);
-        term.write('X', cX - left, cY - top);
+        term.write(player.getGlyph(), player.getPosX() - left, player.getPosY() - top,
+                player.getColor());
        
     }
 
@@ -59,37 +65,37 @@ class PlayScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) {
         switch (key.getKeyCode()) {
             case KeyEvent.VK_NUMPAD4:
-                scrollByAmount(-1,0); 
+                player.moveBy(-1,0); 
                 break;
             case KeyEvent.VK_NUMPAD6:
-                scrollByAmount(1,0); 
+                player.moveBy(1,0); 
                 break;
             case KeyEvent.VK_NUMPAD8:
-                scrollByAmount(0,-1); 
+                player.moveBy(0,-1); 
                 break;
             case KeyEvent.VK_NUMPAD2:
-                scrollByAmount(0,1); 
+                player.moveBy(0,1); 
                 break;
             case KeyEvent.VK_NUMPAD7:
-                scrollByAmount(-1,-1); 
+                player.moveBy(-1,-1); 
                 break;
             case KeyEvent.VK_NUMPAD9:
-                scrollByAmount(1,-1); 
+                player.moveBy(1,-1); 
                 break;
             case KeyEvent.VK_NUMPAD1:
-                scrollByAmount(-1,1); 
+                player.moveBy(-1,1); 
                 break;
             case KeyEvent.VK_NUMPAD3:
-                scrollByAmount(1,1); 
+                player.moveBy(1,1); 
                 break;
             
         }
         return this;
     }
     public int getScrollX() {
-        return Math.max(0, Math.min(cX - screenW/2, dungeon.getWidth() - screenW));
+        return Math.max(0, Math.min(player.getPosX() - screenW/2, dungeon.getWidth() - screenW));
     }
     public int getScrollY() {
-        return Math.max(0, Math.min(cY - screenH/2, dungeon.getHeight() - screenH));
+        return Math.max(0, Math.min(player.getPosX() - screenH/2, dungeon.getHeight() - screenH));
     }
 }

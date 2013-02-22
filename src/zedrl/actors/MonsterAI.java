@@ -4,15 +4,20 @@
  */
 package zedrl.actors;
 
+import zedrl.dungeon.Tile;
+
 /**
  *
  * @author Boxx
  */
-class ActorAI {
+public class MonsterAI {
     private Actor actor;
     
-    public ActorAI(Actor actor){
+    public MonsterAI(Actor actor){
         this.actor = actor;
         this.actor.setAI(this);
+    }
+    public void enterTile(int x, int y, Tile tile){
+        
     }
 }

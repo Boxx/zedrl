@@ -12,7 +12,7 @@ import zedrl.dungeon.Dungeon;
 public class Actor {
     
     private Dungeon dungeon;
-    private ActorAI AI;
+    private MonsterAI AI;
     private int posX;
     private int posY;
     private char glyph;
@@ -48,8 +48,11 @@ public class Actor {
         this.posY = posY;
     }
 
-    public void setAI(ActorAI AI) {
+    public void setAI(MonsterAI AI) {
         this.AI = AI;
+    }
+    public void moveBy(int mx, int my){
+        AI.enterTile(posX+mx, posY+my, dungeon.tile(posX+mx, posY+my));
     }
     
     

@@ -10,14 +10,14 @@ import zedrl.dungeon.Tile;
  *
  * @author Boxx
  */
-public class MonsterAI {
-    private Actor actor;
+public class ActorAI {
+    protected Actor actor;
     
-    public MonsterAI(Actor actor){
+    public ActorAI(Actor actor){
         this.actor = actor;
         this.actor.setAI(this);
     }
     public void enterTile(int x, int y, Tile tile){
-        
+
     }
 }

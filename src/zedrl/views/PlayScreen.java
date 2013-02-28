@@ -96,6 +96,6 @@ class PlayScreen implements Screen {
         return Math.max(0, Math.min(player.getPosX() - screenW/2, dungeon.getWidth() - screenW));
     }
     public int getScrollY() {
-        return Math.max(0, Math.min(player.getPosX() - screenH/2, dungeon.getHeight() - screenH));
+        return Math.max(0, Math.min(player.getPosY() - screenH/2, dungeon.getHeight() - screenH));
     }
 }

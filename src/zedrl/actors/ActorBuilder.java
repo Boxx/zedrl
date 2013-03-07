@@ -24,4 +24,11 @@ public class ActorBuilder {
         new PlayerAI(player);
         return player;
     }
+    
+    public Actor newFungus(){
+        Actor fungus = new Actor(dungeon, 'f', AsciiPanel.green);
+        dungeon.addActor(fungus);
+        new FungusAI(fungus);
+        return fungus;
+    }
 }

@@ -5,6 +5,8 @@
 package zedrl.dungeon;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import zedrl.actors.Actor;
 import zedrl.utilities.Roller;
 
@@ -16,6 +18,7 @@ public class Dungeon {
 
     private Tile[][] tiles;
     private Room[] roomList;
+    private ArrayList<Actor> actorList;
     private int width;
     private int height;
 
@@ -33,20 +36,30 @@ public class Dungeon {
         do{
             x = (int)(Math.random() * width);
             y = (int)(Math.random() * height);
-            System.out.println(x);
-            System.out.println(y);
         }
-        while(!tile(x,y).isPassable());
+        while(!tile(x,y).isPassable() || getActor(x,y) != null);
         
         actor.setPosX(x);
         actor.setPosY(y);
+        actorList.add(actor);
+    }
+    public List<Actor> getActorList() {
+        return actorList;
+    }
+    public Actor getActor(int x, int y){
+        for (Actor actor : actorList){
+            if (actor.getPosX() == x && actor.getPosY() == y){
+                return actor;
+            }
+        }
+        return null;
     }
 
-    public Dungeon(Tile[][] tiles, Room[] roomList) {
+    public Dungeon(Tile[][] tiles) {
         this.tiles = tiles;
-        this.roomList = roomList;
         this.width = tiles.length;
         this.height = tiles[0].length;
+        this.actorList =  new ArrayList<Actor>();
         
     }
     /*

@@ -40,7 +40,7 @@ public class DungeonBuilder {
         Cell[][] cells = buildCells(cellSize);
         Room[] roomList = buildRoomList(cells);
         dungeon = buildDungeon(roomList);
-        return new Dungeon(dungeon, roomList);
+        return new Dungeon(dungeon);
     }
 
     /**
@@ -136,13 +136,6 @@ public class DungeonBuilder {
         }
 
         for (int i = 0; i < roomList.length - 1; i++) {
-            
-            /*
-            int startX = Roller.randomInt(roomList[i].getTopLeftCol(), roomList[i].getBotRightCol());
-            int startY = Roller.randomInt(roomList[i].getTopLeftRow(), roomList[i].getBotRightRow());
-            int targetX = Roller.randomInt(roomList[i + 1].getTopLeftCol(), roomList[i + 1].getBotRightCol());
-            int targetY = Roller.randomInt(roomList[i + 1].getTopLeftRow(), roomList[i + 1].getBotRightRow());
-            */
             
             int startX = roomList[i].getTopLeftCol() + (roomList[i].getBotRightCol() - roomList[i].getTopLeftCol())/2;
             int startY = roomList[i].getTopLeftRow() + (roomList[i].getBotRightRow() - roomList[i].getTopLeftRow())/2;

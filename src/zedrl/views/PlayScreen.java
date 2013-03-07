@@ -29,11 +29,18 @@ class PlayScreen implements Screen {
         screenH = 20;
         createDungeon();
         ActorBuilder ab = new ActorBuilder(dungeon);
-        player = ab.newPlayer();
+        createActors(ab);
     }
 
     private void createDungeon() {
         dungeon = new DungeonBuilder(50, 50, 10).build();
+    }
+    private void createActors(ActorBuilder ab){
+        player = ab.newPlayer();
+        
+        for (int i = 0; i < 10; i++){
+            ab.newFungus();
+        }
     }
 
     private void displayDungeon(AsciiPanel term, int left, int top) {
@@ -42,8 +49,18 @@ class PlayScreen implements Screen {
                 int dx = i + left;
                 int dy = j + top;
                 term.write(dungeon.glyph(dx, dy), i, j, dungeon.color(dx, dy));
+                
+                Actor actor = dungeon.getActor(dx, dy);
+                if(actor != null){
+                    int ax = actor.getPosX();
+                    int ay = actor.getPosY();
+                    if(ax > left && ax < left+screenW && ay > top && ay < top+screenH){
+                        term.write(actor.getGlyph(),ax - left,ay - top,actor.getColor());
+                    }
+                }
             }
         }
+           
     }
     
     @Override
@@ -54,11 +71,6 @@ class PlayScreen implements Screen {
         term.write(player.getGlyph(), player.getPosX() - left, player.getPosY() - top,
                 player.getColor());
        
-    }
-
-    private void scrollByAmount(int x, int y) {
-        cX = Math.max(0, Math.min(cX + x, dungeon.getWidth() - 1));
-        cY = Math.max(0, Math.min(cY + y, dungeon.getHeight() - 1));
     }
     
     @Override

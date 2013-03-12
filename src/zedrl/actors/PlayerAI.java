@@ -4,6 +4,7 @@
  */
 package zedrl.actors;
 
+import java.util.ArrayList;
 import zedrl.dungeon.Tile;
 
 /**
@@ -12,9 +13,12 @@ import zedrl.dungeon.Tile;
  */
 public class PlayerAI extends ActorAI {
     
-    public PlayerAI(Actor actor){
+    private ArrayList<String> messageQueue;
+    
+    public PlayerAI(Actor actor, ArrayList<String> messageQueue){
         
         super(actor);
+        this.messageQueue = messageQueue;
     }
     
     @Override
@@ -26,6 +30,11 @@ public class PlayerAI extends ActorAI {
         }else{
             
         }
+    }
+    
+    @Override
+    public void getMessage(String msg){
+        messageQueue.add(msg);
     }
     
 }

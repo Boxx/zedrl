@@ -10,7 +10,34 @@ package zedrl.actors;
  */
 public class FungusAI extends ActorAI {
     
-    public FungusAI(Actor actor){
+    private ActorBuilder ab;
+    private int counter;
+    
+    public FungusAI(Actor actor, ActorBuilder ab){
         super(actor);
+        this.ab = ab;
+    }
+    
+    @Override
+    public void update(){
+        
+        if(counter < 5 && Math.random() < .001){
+            makeBabies();
+        }
+        
+    }
+
+    private void makeBabies() {
+        int x = actor.getPosX() + (int)(Math.random() * 11) - 5;
+        int y = actor.getPosY() + (int)(Math.random() * 11) - 5;
+        
+        if(!actor.canEnter(x, y)){
+            return;
+        }
+        
+        Actor baby = ab.newFungus();
+        baby.setPosX(x);
+        baby.setPosY(y);
+        counter++;
     }
 }

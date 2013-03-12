@@ -43,9 +43,7 @@ public class Dungeon {
         actor.setPosY(y);
         actorList.add(actor);
     }
-    public List<Actor> getActorList() {
-        return actorList;
-    }
+    
     public Actor getActor(int x, int y){
         for (Actor actor : actorList){
             if (actor.getPosX() == x && actor.getPosY() == y){
@@ -53,6 +51,18 @@ public class Dungeon {
             }
         }
         return null;
+    }
+    
+    public void delete(Actor occupant){
+        
+        actorList.remove(occupant);
+    }
+    
+    public void update(){
+        ArrayList<Actor> updateList = new ArrayList<>(actorList);
+        for (Actor actor : updateList){
+            actor.update();
+        }
     }
 
     public Dungeon(Tile[][] tiles) {

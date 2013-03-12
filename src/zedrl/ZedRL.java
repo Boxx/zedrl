@@ -44,8 +44,7 @@ public class ZedRL extends JFrame implements KeyListener
     @Override
     public void keyTyped(KeyEvent e)
     {
-        screen = screen.respondToUserInput(e);
-        repaint();
+        
     }
 
     @Override
@@ -58,8 +57,9 @@ public class ZedRL extends JFrame implements KeyListener
     @Override
     public void keyReleased(KeyEvent e)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
+    
 
     public static void main(String[] args)
     {

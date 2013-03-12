@@ -6,6 +6,7 @@ package zedrl.views;
 
 import asciiPanel.AsciiPanel;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import zedrl.actors.Actor;
 import zedrl.actors.ActorBuilder;
 import zedrl.dungeon.Dungeon;
@@ -19,14 +20,14 @@ class PlayScreen implements Screen {
 
     private Dungeon dungeon;
     private Actor player;
-    private int cX;
-    private int cY;
+    private ArrayList<String> messageQueue;
     private int screenW;
     private int screenH;
 
     public PlayScreen() {
         screenW = 50;
         screenH = 20;
+        messageQueue = new ArrayList<>();
         createDungeon();
         ActorBuilder ab = new ActorBuilder(dungeon);
         createActors(ab);
@@ -36,7 +37,7 @@ class PlayScreen implements Screen {
         dungeon = new DungeonBuilder(50, 50, 10).build();
     }
     private void createActors(ActorBuilder ab){
-        player = ab.newPlayer();
+        player = ab.newPlayer(messageQueue);
         
         for (int i = 0; i < 10; i++){
             ab.newFungus();
@@ -68,14 +69,29 @@ class PlayScreen implements Screen {
         int left = getScrollX();
         int top = getScrollY();
         displayDungeon(term, left, top);
-        term.write(player.getGlyph(), player.getPosX() - left, player.getPosY() - top,
-                player.getColor());
-       
+        displayStats(term);
+        displayMessages(term, messageQueue);
+        
     }
     
+    public void displayMessages(AsciiPanel term, ArrayList<String> messageQueue){
+        
+        for (int i = 0; i < messageQueue.size(); i++){
+            String msg = messageQueue.get(i);
+            term.write(msg, 1, 21 + i);
+        }
+        messageQueue.clear();
+    }
+    public void displayStats(AsciiPanel term){
+        
+        String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
+        term.write(stats, 55, 2);
+    }
+    
+
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-        switch (key.getKeyCode()) {
+            switch (key.getKeyCode()) {
             case KeyEvent.VK_NUMPAD4:
                 player.moveBy(-1,0); 
                 break;
@@ -101,7 +117,9 @@ class PlayScreen implements Screen {
                 player.moveBy(1,1); 
                 break;
             
-        }
+            } 
+        
+        dungeon.update();
         return this;
     }
     public int getScrollX() {

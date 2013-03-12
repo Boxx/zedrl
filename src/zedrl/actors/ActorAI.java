@@ -20,4 +20,13 @@ public class ActorAI {
     public void enterTile(int x, int y, Tile tile){
 
     }
+
+    void update() {
+        
+    }
+    
+    public void getMessage(String msg){
+        
+
+    }
 }

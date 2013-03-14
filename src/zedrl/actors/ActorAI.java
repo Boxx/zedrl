@@ -21,7 +21,7 @@ public class ActorAI {
 
     }
 
-    void update() {
+    public void update() {
         
     }
     

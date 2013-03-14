@@ -21,8 +21,8 @@ public class Actor {
     public String name;
     public int totalHP;
     public int curHP;
-    public int atkVal;
-    public int defVal;
+    public int attackVal;
+    public int defenseVal;
     
 
     public Actor(Dungeon dungeon, char glyph, Color color) {
@@ -37,8 +37,8 @@ public class Actor {
         this.color = color;
         this.name = name;
         this.totalHP = totalHP;
-        this.atkVal = atkVal;
-        this.defVal = defVal;
+        this.attackVal = atkVal;
+        this.defenseVal = defVal;
         this.curHP = totalHP;
     }
 
@@ -88,7 +88,7 @@ public class Actor {
     }
     
     public int getAtkVal() {
-        return atkVal;
+        return attackVal;
     }
 
     public int getCurHP() {
@@ -96,7 +96,7 @@ public class Actor {
     }
 
     public int getDefVal() {
-        return defVal;
+        return defenseVal;
     }
 
     public int getTotalHP() {

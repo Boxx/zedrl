@@ -32,4 +32,13 @@ public class ActorBuilder {
         new FungusAI(fungus, this);
         return fungus;
     }
+    
+    public Actor newGoblin(){
+        
+        Actor goblin = new Actor(dungeon, 'g', AsciiPanel.red, "goblin", 15, 5, 1);
+        dungeon.addActor(goblin);
+        
+        return null;
+        
+    }
 }

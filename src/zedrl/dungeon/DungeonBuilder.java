@@ -8,9 +8,11 @@ import zedrl.utilities.Roller;
  */
 public class DungeonBuilder {
 
-    private Tile[][] dungeon;
+    private Tile[][][] dungeon;
+    private int[][][] areas;
     private int dungeonWidth;
     private int dungeonHeight;
+    private int dungeonDepth;
     private int cellsHeight;
     private int cellsWidth;
     private int cellSize;
@@ -28,6 +30,7 @@ public class DungeonBuilder {
         this.dungeonWidth = width;
         this.dungeonHeight = height;
         this.cellSize = cellSize;
+        this.dungeonDepth = 10;
     }
 
     /**
@@ -36,11 +39,26 @@ public class DungeonBuilder {
      * @return returns a dungeon and list of rooms
      */
     public Dungeon build() {
-        dungeon = new Tile[dungeonHeight][dungeonWidth];
-        Cell[][] cells = buildCells(cellSize);
+        dungeon = new Tile[dungeonHeight][dungeonWidth][dungeonDepth];
+        Cell[][][] cells = buildCells(cellSize);
+
         Room[] roomList = buildRoomList(cells);
         dungeon = buildDungeon(roomList);
         return new Dungeon(dungeon);
+    }
+    
+    private DungeonBuilder buildAreas(){
+        
+        areas = new int[dungeonWidth][dungeonHeight][dungeonDepth];
+        
+        for(int dz = 0; dz < dungeonDepth; dz++){
+            for(int dx = 0; dx < dungeonWidth; dx++){
+                for(int dy = 0; dy < dungeonHeight; dy++){
+                    
+                }
+            }
+        }
+        return this;
     }
 
     /**
@@ -48,17 +66,18 @@ public class DungeonBuilder {
      * @param cellSize
      * @return returns a grid of cells
      */
-    private Cell[][] buildCells(int cellSize) {
+    private Cell[][][] buildCells(int cellSize) {
         cellsWidth = dungeonWidth / cellSize;
         cellsHeight = dungeonHeight / cellSize;
-        Cell[][] cells = new Cell[cellsHeight][cellsWidth];
+        Cell[][][] cells = new Cell[cellsHeight][cellsWidth][dungeonDepth];
+        for (int z = 0; z < dungeonDepth; z++){
+            for (int i = 0; i < dungeonHeight; i += cellSize) {
+                for (int j = 0; j < dungeonWidth; j += cellSize) {
 
-        for (int i = 0; i < dungeonHeight; i += cellSize) {
-            for (int j = 0; j < dungeonWidth; j += cellSize) {
+                    cells[i / cellSize][j / cellSize][z] = new Cell(i, j, i + cellSize - 1,
+                            j + cellSize - 1, z);
 
-                cells[i / cellSize][j / cellSize] = new Cell(i, j, i + cellSize - 1,
-                        j + cellSize - 1);
-
+                }
             }
         }
 
@@ -72,15 +91,17 @@ public class DungeonBuilder {
      * @param cells
      * @return returns a list of rooms
      */
-    public Room[] buildRoomList(Cell[][] cells) {
+    public Room[] buildRoomList(Cell[][][] cells) {
         int cellCount = cellsWidth * cellsHeight;
-        int ROOM_MIN = (int) (.3 * cellCount);
-        int ROOM_THRESHHOLD = (int) (.5 * cellCount);
+        int ROOM_MIN = (int) (.3 * cellCount * dungeonDepth);
+        int ROOM_THRESHHOLD = (int) (.5 * cellCount * dungeonDepth);
         int numberOfRooms = 0;
         while (numberOfRooms <= ROOM_MIN || numberOfRooms >= ROOM_THRESHHOLD) {
-            numberOfRooms = (int) (Math.random() * cellCount);
+            numberOfRooms = (int) (Math.random() * cellCount * dungeonDepth);
         }
+        System.out.println(numberOfRooms);
         Room[] rooms = new Room[numberOfRooms];
+        /*
         int roomCounter = 0;
         while (roomCounter != numberOfRooms) {
             Cell curCell = cells[(int) (Math.random() * cellsHeight)][(int) (Math.random() * cellsWidth)];
@@ -91,6 +112,19 @@ public class DungeonBuilder {
                 roomCounter++;
             }
         }
+        * */
+        for(int z = 0; z < dungeonDepth; z++){
+            for (int roomCounter = 0; roomCounter != numberOfRooms; roomCounter++){
+                Cell curCell = cells[(int) (Math.random() * cellsHeight)][(int) (Math.random() * cellsWidth)][z];
+                if (curCell.isRoom()) {
+                } else {
+                rooms[roomCounter] = new Room(curCell.getTopLeftRow(), 
+                        curCell.getTopLeftCol(), curCell.getBotRightRow(), curCell.getBotRightCol(), curCell.getDepth());
+                curCell.setRoom();
+                roomCounter++;
+                }
+            }   
+        }
         return rooms;
     }
 
@@ -100,15 +134,18 @@ public class DungeonBuilder {
      * @param roomList
      * @return returns a dungeon
      */
-    public Tile[][] buildDungeon(Room[] roomList) {
+    public Tile[][][] buildDungeon(Room[] roomList) {
 
         /*
          * Iterate through dungeon and set all tiles to OOB initially
          */
-        for (int i = 0; i < dungeon.length; i++) {
-
-            for (int j = 0; j < dungeon[0].length; j++) {
-                dungeon[i][j] = Tile.WALL;
+        for (int x = 0; x < dungeon.length; x++) {
+            for (int y = 0; y < dungeon[0].length; y++) {
+                for(int z = 0; z < dungeon[0][0].length; z++){
+                    
+                    dungeon[x][y][z] = Tile.WALL;
+                }
+                
             }
         }
 
@@ -117,23 +154,26 @@ public class DungeonBuilder {
          * Future plans: use different ASCII characters to make rooms prettier
          *
          */
-        for (int i = 0; i < roomList.length; i++) { // Room list iterator
+            for(int z = 0; z < dungeonDepth; z++){
+                System.out.println(z);
+                for (int i = 0; i < roomList.length; i++) { // Room list iterator
+                    System.out.println(i);
+                    for (int j = roomList[i].getTopLeftRow(); j <= roomList[i].getBotRightRow(); j++) {  // Dungeon rows
+                        System.out.println(j);
+                        for (int k = roomList[i].getTopLeftCol(); k <= roomList[i].getBotRightCol(); k++) {  // Dungeon columns
+                            System.out.println(k);
+                            if (j == roomList[i].getTopLeftRow() || j == roomList[i].getBotRightRow()) {  // Handles the top and bottom sides of the rect
 
-            for (int j = roomList[i].getTopLeftRow(); j <= roomList[i].getBotRightRow(); j++) {  // Dungeon rows
-
-                for (int k = roomList[i].getTopLeftCol(); k <= roomList[i].getBotRightCol(); k++) {  // Dungeon columns
-
-                    if (j == roomList[i].getTopLeftRow() || j == roomList[i].getBotRightRow()) {  // Handles the top and bottom sides of the rect
-
-                        dungeon[k][j] = Tile.WALL;
-                    } else if (k == roomList[i].getTopLeftCol() || k == roomList[i].getBotRightCol()) { // Left and Right
-                        dungeon[k][j] = Tile.WALL;
-                    } else {
-                        dungeon[k][j] = Tile.FLOOR;
+                                dungeon[k][j][z] = Tile.WALL;
+                            } else if (k == roomList[i].getTopLeftCol() || k == roomList[i].getBotRightCol()) { // Left and Right
+                                dungeon[k][j][z] = Tile.WALL;
+                            } else {
+                                dungeon[k][j][z] = Tile.FLOOR;
+                            }
+                        }
                     }
                 }
             }
-        }
 
         for (int i = 0; i < roomList.length - 1; i++) {
             
@@ -141,36 +181,40 @@ public class DungeonBuilder {
             int startY = roomList[i].getTopLeftRow() + (roomList[i].getBotRightRow() - roomList[i].getTopLeftRow())/2;
             int targetX = roomList[i+1].getTopLeftCol() + (roomList[i+1].getBotRightCol() - roomList[i+1].getTopLeftCol())/2;
             int targetY = roomList[i+1].getTopLeftRow() + (roomList[i+1].getBotRightRow() - roomList[i+1].getTopLeftRow())/2;
-            
-            
-            if (startY < targetY){
-                for(;startY < targetY; startY++){
-                    dungeon[startX][startY] = Tile.FLOOR;
+            int startDepth = roomList[i].getDepthLevel();
+            int targetDepth = roomList[i].getDepthLevel();
+            if(startDepth == targetDepth){
+                if (startY < targetY){
+                    for(;startY < targetY; startY++){
+                        dungeon[startX][startY][targetDepth] = Tile.FLOOR;
+                    }
                 }
-            }
-            if (startY > targetY){
-                for(;startY > targetY; startY--){
-                    dungeon[startX][startY] = Tile.FLOOR;
+                if (startY > targetY){
+                    for(;startY > targetY; startY--){
+                        dungeon[startX][startY][targetDepth] = Tile.FLOOR;
+                    }
                 }
-            }
-            if (startX < targetX){
-                for(;startX < targetX; startX++){
-                    dungeon[startX][targetY] = Tile.FLOOR;
+                if (startX < targetX){
+                    for(;startX < targetX; startX++){
+                        dungeon[startX][targetY][targetDepth] = Tile.FLOOR;
+                    }
                 }
-            }
-            if (startX > targetX){
-                for(;startX > targetX; startX--){
-                    dungeon[startX][targetY] = Tile.FLOOR;
+                if (startX > targetX){
+                    for(;startX > targetX; startX--){
+                        dungeon[startX][targetY][targetDepth] = Tile.FLOOR;
+                    }
                 }
-            }
-            if (startX == targetX && startY == targetY){
-                roomList[i].setIsConnected(true);
-                roomList[i+1].setIsConnected(true); 
+                if (startX == targetX && startY == targetY){
+                    roomList[i].setIsConnected(true);
+                    roomList[i+1].setIsConnected(true); 
+                }
+            } else {
+                System.out.println("Uh oh these rooms are on different Z levels");
             }
         }
         return dungeon;
     }
-
+/*
     public void printDungeon() {
         for (int i = 0; i < dungeon.length; i++) {
 
@@ -180,7 +224,7 @@ public class DungeonBuilder {
             System.out.println();
         }
     }
-
+*/
     /**
      *
      * @param rooms

@@ -5,6 +5,7 @@
 package zedrl.actors;
 import java.awt.Color;
 import zedrl.dungeon.Dungeon;
+import zedrl.dungeon.Tile;
 /**
  *
  * @author Boxx
@@ -15,6 +16,7 @@ public class Actor {
     private ActorAI AI;
     private int posX;
     private int posY;
+    private int posZ;
     private char glyph;
     private Color color;
 
@@ -43,12 +45,12 @@ public class Actor {
     }
 
     
-    public void moveBy(int mx, int my){
-        
-        Actor occupant = dungeon.getActor(posX + mx, posY + my);
+    public void moveBy(int mx, int my, int mz){
+        Tile targetTile = dungeon.tile(mx, my, mz);
+        Actor occupant = dungeon.getActor(posX + mx, posY + my, posZ + mz);
         
         if(occupant == null){
-           AI.enterTile(posX + mx, posY + my, dungeon.tile(posX + mx, posY + my)); 
+           AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile); 
         }else{
             attack(occupant);
         }
@@ -71,8 +73,8 @@ public class Actor {
     public void update() {
         AI.update();
     }
-    public boolean canEnter(int wx, int wy) {
-        return dungeon.tile(wx, wy).isPassable() && dungeon.getActor(wx, wy) == null;
+    public boolean canEnter(int wx, int wy, int wz) {
+        return dungeon.tile(wx, wy, wz).isPassable() && dungeon.getActor(wx, wy, wz) == null;
     }
     
     public void setHP(int value){
@@ -129,6 +131,15 @@ public class Actor {
     public void setAI(ActorAI AI) {
         this.AI = AI;
     }
+
+    void setPosZ(int posZ) {
+        this.posZ = posZ;
+    }
+
+    public int getPosZ() {
+        return posZ;
+    }
+    
 
     
     

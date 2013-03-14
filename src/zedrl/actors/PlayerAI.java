@@ -22,11 +22,12 @@ public class PlayerAI extends ActorAI {
     }
     
     @Override
-    public void enterTile(int x, int y, Tile tile){
+    public void enterTile(int x, int y, int z, Tile tile){
             
         if (tile.isPassable()){
             actor.setPosX(x);
             actor.setPosY(y);
+            actor.setPosZ(z);
         }else{
             
         }

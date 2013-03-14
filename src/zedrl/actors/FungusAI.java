@@ -30,8 +30,8 @@ public class FungusAI extends ActorAI {
     private void makeBabies() {
         int x = actor.getPosX() + (int)(Math.random() * 11) - 5;
         int y = actor.getPosY() + (int)(Math.random() * 11) - 5;
-        
-        if(!actor.canEnter(x, y)){
+        int z = actor.getPosZ();
+        if(!actor.canEnter(x, y, z)){
             return;
         }
         

@@ -15,16 +15,26 @@ public class Cell
     private int topLeftCol;
     private int botRightRow;
     private int botRightCol;
+    private int depth;
     private boolean isRoom;
 
-    public Cell(int topLeftRow, int topLeftCol, int botRightRow, int botRightCol)
+    public Cell(int topLeftRow, int topLeftCol, int botRightRow, int botRightCol, int depth)
     {
         this.topLeftRow = topLeftRow;
         this.topLeftCol = topLeftCol;
         this.botRightRow = botRightRow;
         this.botRightCol = botRightCol;
+        this.depth = depth;
     }
 
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+    
     public int getBotRightCol()
     {
         return botRightCol;

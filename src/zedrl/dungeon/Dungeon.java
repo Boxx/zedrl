@@ -16,11 +16,12 @@ import zedrl.utilities.Roller;
  */
 public class Dungeon {
 
-    private Tile[][] tiles;
+    private Tile[][][] tiles;
     private Room[] roomList;
     private ArrayList<Actor> actorList;
     private int width;
     private int height;
+    private int depth;
 
     public int getHeight() {
         return height;
@@ -29,7 +30,7 @@ public class Dungeon {
     public int getWidth() {
         return width;
     }
-    public void addActor(Actor actor){
+    public void addActor(Actor actor, int z){
         int x;
         int y;
         
@@ -37,16 +38,16 @@ public class Dungeon {
             x = (int)(Math.random() * width);
             y = (int)(Math.random() * height);
         }
-        while(!tile(x,y).isPassable() || getActor(x,y) != null);
+        while(!tile(x,y,z).isPassable() || getActor(x,y,z) != null);
         
         actor.setPosX(x);
         actor.setPosY(y);
         actorList.add(actor);
     }
     
-    public Actor getActor(int x, int y){
+    public Actor getActor(int x, int y, int z){
         for (Actor actor : actorList){
-            if (actor.getPosX() == x && actor.getPosY() == y){
+            if (actor.getPosX() == x && actor.getPosY() == y && actor.getPosZ() == z){
                 return actor;
             }
         }
@@ -65,10 +66,11 @@ public class Dungeon {
         }
     }
 
-    public Dungeon(Tile[][] tiles) {
+    public Dungeon(Tile[][][] tiles) {
         this.tiles = tiles;
         this.width = tiles.length;
         this.height = tiles[0].length;
+        this.depth = tiles[0][0].length;
         this.actorList =  new ArrayList<Actor>();
         
     }
@@ -76,25 +78,25 @@ public class Dungeon {
      * Method for getting a tile at a given position while checking its bounds
      */
 
-    public Tile tile(int x, int y) {
+    public Tile tile(int x, int y, int z) {
         if (x < 0 || x >= width || y < 0 || y >= height) {
             return Tile.OOB;
         } else {
-            return tiles[x][y];
+            return tiles[x][y][z];
         }
     }
     /*
      * Returns the tile glyph at a given position
      */
 
-    public char glyph(int x, int y) {
-        return tile(x, y).getGlyph();
+    public char glyph(int x, int y, int z) {
+        return tile(x, y, z).getGlyph();
     }
     /*
      * Returns the tile color at a given position
      */
 
-    public Color color(int x, int y) {
-        return tile(x, y).getColor();
+    public Color color(int x, int y, int z) {
+        return tile(x, y, z).getColor();
     }
 }

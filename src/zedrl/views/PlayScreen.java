@@ -49,15 +49,11 @@ class PlayScreen implements Screen {
             for (int j = 0; j < screenH; j++) {
                 int dx = i + left;
                 int dy = j + top;
-                term.write(dungeon.glyph(dx, dy), i, j, dungeon.color(dx, dy));
-                
-                Actor actor = dungeon.getActor(dx, dy);
+                Actor actor = dungeon.getActor(dx, dy, player.getPosZ());
                 if(actor != null){
-                    int ax = actor.getPosX();
-                    int ay = actor.getPosY();
-                    if(ax > left && ax < left+screenW && ay > top && ay < top+screenH){
-                        term.write(actor.getGlyph(),ax - left,ay - top,actor.getColor());
-                    }
+                    term.write(actor.getGlyph(), actor.getPosX() - left, actor.getPosY() - top, actor.getColor());
+                }else{
+                    term.write(dungeon.glyph(dx, dy, player.getPosZ()),i,j,dungeon.color(dx, dy, player.getPosZ()));
                 }
             }
         }
@@ -93,28 +89,28 @@ class PlayScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) {
             switch (key.getKeyCode()) {
             case KeyEvent.VK_NUMPAD4:
-                player.moveBy(-1,0); 
+                player.moveBy(-1,0,0); 
                 break;
             case KeyEvent.VK_NUMPAD6:
-                player.moveBy(1,0); 
+                player.moveBy(1,0,0); 
                 break;
             case KeyEvent.VK_NUMPAD8:
-                player.moveBy(0,-1); 
+                player.moveBy(0,-1,0); 
                 break;
             case KeyEvent.VK_NUMPAD2:
-                player.moveBy(0,1); 
+                player.moveBy(0,1,0); 
                 break;
             case KeyEvent.VK_NUMPAD7:
-                player.moveBy(-1,-1); 
+                player.moveBy(-1,-1,0); 
                 break;
             case KeyEvent.VK_NUMPAD9:
-                player.moveBy(1,-1); 
+                player.moveBy(1,-1,0); 
                 break;
             case KeyEvent.VK_NUMPAD1:
-                player.moveBy(-1,1); 
+                player.moveBy(-1,1,0); 
                 break;
             case KeyEvent.VK_NUMPAD3:
-                player.moveBy(1,1); 
+                player.moveBy(1,1,0); 
                 break;
             
             } 

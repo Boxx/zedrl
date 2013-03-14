@@ -15,13 +15,23 @@ public class Room
     private int topLeftCol;
     private int botRightRow;
     private int botRightCol;
+    private int depthLevel;
 
-    public Room(int topLeftRow, int topLeftCol, int botRightRow, int botRightCol)
+    public Room(int topLeftRow, int topLeftCol, int botRightRow, int botRightCol, int depthLevel)
     {
         this.topLeftRow = topLeftRow;
         this.topLeftCol = topLeftCol;
         this.botRightRow = botRightRow;
         this.botRightCol = botRightCol;
+        this.depthLevel = depthLevel;
+    }
+
+    public int getDepthLevel() {
+        return depthLevel;
+    }
+
+    public void setDepthLevel(int depthLevel) {
+        this.depthLevel = depthLevel;
     }
     
     

@@ -16,7 +16,10 @@ public enum Tile
 
     FLOOR((char) 250, AsciiPanel.yellow),
     WALL((char) 177, AsciiPanel.white),
-    OOB('x', AsciiPanel.brightBlack);
+    OOB('x', AsciiPanel.brightBlack),
+    UP('<', AsciiPanel.white),
+    DOWN('>', AsciiPanel.white);
+    
     private char glyph;
     private Color color;
 

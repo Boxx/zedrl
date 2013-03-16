@@ -41,4 +41,10 @@ public enum Tile
     public boolean isPassable(){
         return this != WALL && this != OOB;
     }
+    public boolean isFloor(){
+        return this == FLOOR;
+    }
+    public boolean isWall(){
+        return this == WALL;
+    }
 }

@@ -114,6 +114,14 @@ class PlayScreen implements Screen {
                 break;
             
             } 
+            switch (key.getKeyChar()){
+                case '<': 
+                    player.moveBy(0, 0, -1);
+                    break;
+                case '>':
+                    player.moveBy(0, 0, 1);
+                    break;
+            }
         
         dungeon.update();
         return this;

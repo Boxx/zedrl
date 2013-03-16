@@ -46,7 +46,7 @@ public class Actor {
 
     
     public void moveBy(int mx, int my, int mz){
-        Tile targetTile = dungeon.tile(mx, my, mz);
+        Tile targetTile = dungeon.tile(posX + mx, posY + my, posZ + mz);
         Actor occupant = dungeon.getActor(posX + mx, posY + my, posZ + mz);
         
         if(occupant == null){

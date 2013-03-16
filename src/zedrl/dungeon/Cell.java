@@ -26,6 +26,13 @@ public class Cell
         this.botRightCol = botRightCol;
         this.depth = depth;
     }
+    public Cell(int topLeftRow, int topLeftCol, int botRightRow, int botRightCol)
+    {
+        this.topLeftRow = topLeftRow;
+        this.topLeftCol = topLeftCol;
+        this.botRightRow = botRightRow;
+        this.botRightCol = botRightCol;
+    }
 
     public int getDepth() {
         return depth;

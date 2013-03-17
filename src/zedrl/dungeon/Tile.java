@@ -22,6 +22,8 @@ public enum Tile
     
     private char glyph;
     private Color color;
+    private Location connection;
+    
 
     public char getGlyph()
     {
@@ -46,5 +48,15 @@ public enum Tile
     }
     public boolean isWall(){
         return this == WALL;
+    }
+    
+    public void setConnection(int x, int y, int z){
+        connection = new Location(x,y,z);
+    }
+    public Location getConnection(){
+        return connection;
+    }
+    public boolean isStair(){
+        return this == UP || this == DOWN;
     }
 }

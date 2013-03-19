@@ -15,7 +15,6 @@ public class DungeonBuilder {
     private Tile[][][] dungeon;
     private Cell[][] cells;
     private Room[] roomsAtLevel;
-    private ArrayList<Room> masterRoomList;
     private int dungeonWidth;
     private int dungeonHeight;
     private int dungeonDepth;
@@ -39,10 +38,9 @@ public class DungeonBuilder {
         this.dungeonDepth = 10;
         this.dungeonlevel = new Tile[dungeonHeight][dungeonWidth];
         this.dungeon = new Tile[dungeonHeight][dungeonWidth][dungeonDepth];
-        this.masterRoomList = new ArrayList<>();
         for (int i = 0; i < dungeonDepth; i++) {
-            cells = buildCells(cellSize);
-            roomsAtLevel = buildRoomList(cells);
+            cells = buildCells();
+            roomsAtLevel = buildRoomList();
             //masterRoomList.addAll(Arrays.asList(roomsAtLevel));
             dungeonlevel = buildDungeon(roomsAtLevel);
             for (int j = 0; j < dungeonlevel.length; j++) {
@@ -68,7 +66,7 @@ public class DungeonBuilder {
      * @param cellSize
      * @return returns a grid of cells
      */
-    private Cell[][] buildCells(int cellSize) {
+    private Cell[][] buildCells() {
         cellsWidth = dungeonWidth / cellSize;
         cellsHeight = dungeonHeight / cellSize;
         Cell[][] cells = new Cell[cellsHeight][cellsWidth];
@@ -92,7 +90,7 @@ public class DungeonBuilder {
      * @param cells
      * @return returns a list of rooms
      */
-    public Room[] buildRoomList(Cell[][] cells) {
+    public Room[] buildRoomList() {
         int cellCount = cellsWidth * cellsHeight;
         int ROOM_MIN = (int) (.3 * cellCount);
         int ROOM_THRESHHOLD = (int) (.5 * cellCount);
@@ -202,6 +200,13 @@ public class DungeonBuilder {
             
         }
         
+        /*
+         * This generates two seed rooms for the floor and places stairs in
+         * them.  
+         * 
+         * @TODO Need to check the z level so up/down stairs aren't placed on 
+         * first/last level
+         */
         int seedRoomDown1 = (int) (Math.random() * roomList.length - 1);
         int seedRoomDown2;
         do {
@@ -212,16 +217,12 @@ public class DungeonBuilder {
             
             if (i == seedRoomDown1 || i == seedRoomDown2){
                 
-                
-                
                 int width = roomList[i].getBotRightCol() - roomList[i].getTopLeftCol() - 1;
                 int height = roomList[i].getBotRightRow() - roomList[i].getTopLeftRow() - 1;
                 int stairX = (int) (Math.random() * width + roomList[i].getTopLeftCol()) + 1;
                 int stairY = (int) (Math.random() * height + roomList[i].getTopLeftRow()) + 1;
 
                 dungeonlevel[stairX][stairY] = Tile.DOWN;
-                
-                    
                 
             }
         }

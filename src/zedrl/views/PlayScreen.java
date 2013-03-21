@@ -115,7 +115,7 @@ class PlayScreen implements Screen {
             
             } 
             switch (key.getKeyChar()){
-                case '<': 
+                case '<':
                     player.moveBy(0, 0, -1);
                     break;
                 case '>':

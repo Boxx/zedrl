@@ -14,8 +14,8 @@ public class DungeonBuilder {
     private Tile[][] dungeonlevel;
     private Tile[][][] dungeon;
     private Cell[][] cells;
-    private Room[] roomList;
-    private int curLevel;
+    private Room[] roomsAtLevel;
+    private int levelCounter;
     private int dungeonWidth;
     private int dungeonHeight;
     private int dungeonDepth;
@@ -39,17 +39,19 @@ public class DungeonBuilder {
         this.dungeonDepth = 10;
         this.dungeonlevel = new Tile[dungeonHeight][dungeonWidth];
         this.dungeon = new Tile[dungeonHeight][dungeonWidth][dungeonDepth];
+        this.levelCounter = 0;
         for (int i = 0; i < dungeonDepth; i++) {
             cells = buildCells();
-            roomList = buildRoomList();
-            //masterRoomList.addAll(Arrays.asList(roomsAtLevel));
+            roomsAtLevel = buildroomsAtLevel();
+            //masterroomsAtLevel.addAll(Arrays.asList(roomsAtLevel));
             dungeonlevel = buildDungeon();
+            buildStairs();
             for (int j = 0; j < dungeonlevel.length; j++) {
                 for (int k = 0; k < dungeonlevel[0].length; k++) {
                     dungeon[k][j][i] = dungeonlevel[k][j];
                 }
             }
-            curLevel++;
+            levelCounter++;
         }
 
     }
@@ -92,7 +94,7 @@ public class DungeonBuilder {
      * @param cells
      * @return returns a list of rooms
      */
-    public Room[] buildRoomList() {
+    private Room[] buildroomsAtLevel() {
         int cellCount = cellsWidth * cellsHeight;
         int ROOM_MIN = (int) (.3 * cellCount);
         int ROOM_THRESHHOLD = (int) (.5 * cellCount);
@@ -117,10 +119,10 @@ public class DungeonBuilder {
     /**
      * Digs the dungeon, rooms, and corridors
      *
-     * @param roomList
+     * @param roomsAtLevel
      * @return returns a dungeon
      */
-    public Tile[][] buildDungeon() {
+    private Tile[][] buildDungeon() {
 
         /*
          * Iterate through dungeon and set all tiles to OOB initially
@@ -133,7 +135,7 @@ public class DungeonBuilder {
         }
 
         /*
-         * Seed room between 0 and roomlist length if we are in the seedroom
+         * Seed room between 0 and roomsAtLevel length if we are in the seedroom
          * generate the coords and make a stair otherwise we'll skip over this
          * shit
          *
@@ -149,16 +151,16 @@ public class DungeonBuilder {
         
         
         
-       for (int i = 0; i < roomList.length; i++) { // Room list iterator
+       for (int i = 0; i < roomsAtLevel.length; i++) { // Room list iterator
 
-            for (int j = roomList[i].getTopLeftRow(); j <= roomList[i].getBotRightRow(); j++) {  // Dungeon rows
+            for (int j = roomsAtLevel[i].getTopLeftRow(); j <= roomsAtLevel[i].getBotRightRow(); j++) {  // Dungeon rows
 
-                for (int k = roomList[i].getTopLeftCol(); k <= roomList[i].getBotRightCol(); k++) {  // Dungeon columns
+                for (int k = roomsAtLevel[i].getTopLeftCol(); k <= roomsAtLevel[i].getBotRightCol(); k++) {  // Dungeon columns
 
-                    if (j == roomList[i].getTopLeftRow() || j == roomList[i].getBotRightRow()) {  // Handles the top and bottom sides of the rect
+                    if (j == roomsAtLevel[i].getTopLeftRow() || j == roomsAtLevel[i].getBotRightRow()) {  // Handles the top and bottom sides of the rect
 
                         dungeonlevel[k][j] = Tile.WALL;
-                    } else if (k == roomList[i].getTopLeftCol() || k == roomList[i].getBotRightCol()) { // Left and Right
+                    } else if (k == roomsAtLevel[i].getTopLeftCol() || k == roomsAtLevel[i].getBotRightCol()) { // Left and Right
                         dungeonlevel[k][j] = Tile.WALL;
                     } else {
                         dungeonlevel[k][j] = Tile.FLOOR;
@@ -167,12 +169,12 @@ public class DungeonBuilder {
             }
         }
 
-        for (int i = 0; i < roomList.length - 1; i++) {
+        for (int i = 0; i < roomsAtLevel.length - 1; i++) {
             
-            int startX = roomList[i].getCenterX();
-            int startY = roomList[i].getCenterY();
-            int targetX = roomList[i+1].getCenterX();
-            int targetY = roomList[i+1].getCenterY();
+            int startX = roomsAtLevel[i].getCenterX();
+            int startY = roomsAtLevel[i].getCenterY();
+            int targetX = roomsAtLevel[i+1].getCenterX();
+            int targetY = roomsAtLevel[i+1].getCenterY();
             
             
             if (startY < targetY){
@@ -196,8 +198,8 @@ public class DungeonBuilder {
                 }
             }
             if (startX == targetX && startY == targetY){
-                roomList[i].setIsConnected(true);
-                roomList[i+1].setIsConnected(true); 
+                roomsAtLevel[i].setIsConnected(true);
+                roomsAtLevel[i+1].setIsConnected(true); 
             }
             
         }
@@ -212,35 +214,67 @@ public class DungeonBuilder {
         
         return dungeonlevel;
     }
-    public void buildStairs(){
-        int seedRoomDown1 = (int) (Math.random() * roomList.length - 1);
-        int seedRoomDown2;
-        do {
-            seedRoomDown2 = (int) (Math.random() * roomList.length - 1);
-        } while (seedRoomDown1 == seedRoomDown2);
-        
-        for (int i = 0; i < roomList.length; i++) { // Room list iterator
-            
-            if (i == seedRoomDown1 || i == seedRoomDown2){
-                
-                int width = roomList[i].getBotRightCol() - roomList[i].getTopLeftCol() - 1;
-                int height = roomList[i].getBotRightRow() - roomList[i].getTopLeftRow() - 1;
-                int stairX = (int) (Math.random() * width + roomList[i].getTopLeftCol()) + 1;
-                int stairY = (int) (Math.random() * height + roomList[i].getTopLeftRow()) + 1;
-                dungeonlevel[stairX][stairY] = Tile.DOWN;
-                /*
-                int stairUpX;
-                int stairUpY;
-                do{
-                    stairUpX = (int)(Math.random() * dungeonWidth);
-                    stairUpY = (int)(Math.random() * dungeonHeight);
-                }while(!tile(stairUpX,stairUpY,curLevel+1).isPassable());
-                
-                dungeon[stairUpX][stairUpY][curLevel+1] = Tile.UP;
-                * */
-            }
+
+    private void buildStairs(){
+        if(levelCounter == 0){
+            buildDownStairs();
+        }
+        else if(levelCounter == dungeonDepth){
+            buildUpStairs();
+        }else{
+            buildDownStairs();
+            buildUpStairs();
         }
     }
+    private void buildUpStairs(){
+        
+        int seedRoomUp1 = (int) (Math.random() * roomsAtLevel.length - 1);
+            int seedRoomUp2;
+            do {
+                seedRoomUp2 = (int) (Math.random() * roomsAtLevel.length - 1);
+            } while (seedRoomUp1 == seedRoomUp2);
+            
+            for (int i = 0; i < roomsAtLevel.length; i++) { // Room list iterator
+
+                if (i == seedRoomUp1 || i == seedRoomUp2){
+
+                    int width = roomsAtLevel[i].getBotRightCol() - roomsAtLevel[i].getTopLeftCol() - 1;
+                    int height = roomsAtLevel[i].getBotRightRow() - roomsAtLevel[i].getTopLeftRow() - 1;
+                    int stairX = (int) (Math.random() * width + roomsAtLevel[i].getTopLeftCol()) + 1;
+                    int stairY = (int) (Math.random() * height + roomsAtLevel[i].getTopLeftRow()) + 1;
+
+                    dungeonlevel[stairX][stairY] = Tile.UP;
+                    dungeonlevel[stairX][stairY].setConnection(stairX, stairY, levelCounter);
+                }
+            }
+            
+        
+    }
+    private void buildDownStairs(){
+        int seedRoomDown1 = (int) (Math.random() * roomsAtLevel.length - 1);
+            int seedRoomDown2;
+            do {
+                seedRoomDown2 = (int) (Math.random() * roomsAtLevel.length - 1);
+            } while (seedRoomDown1 == seedRoomDown2);
+            
+            
+            
+            for (int i = 0; i < roomsAtLevel.length; i++) { // Room list iterator
+
+                if (i == seedRoomDown1 || i == seedRoomDown2){
+
+                    int width = roomsAtLevel[i].getBotRightCol() - roomsAtLevel[i].getTopLeftCol() - 1;
+                    int height = roomsAtLevel[i].getBotRightRow() - roomsAtLevel[i].getTopLeftRow() - 1;
+                    int stairX = (int) (Math.random() * width + roomsAtLevel[i].getTopLeftCol()) + 1;
+                    int stairY = (int) (Math.random() * height + roomsAtLevel[i].getTopLeftRow()) + 1;
+
+                    dungeonlevel[stairX][stairY] = Tile.DOWN;
+                    dungeonlevel[stairX][stairY].setConnection(stairX, stairY, levelCounter);
+
+                }
+            }
+    }
+
     public void printDungeon() {
         for (int i = 0; i < dungeonlevel.length; i++) {
 

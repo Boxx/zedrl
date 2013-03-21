@@ -14,7 +14,8 @@ public class DungeonBuilder {
     private Tile[][] dungeonlevel;
     private Tile[][][] dungeon;
     private Cell[][] cells;
-    private Room[] roomsAtLevel;
+    private Room[] roomList;
+    private int curLevel;
     private int dungeonWidth;
     private int dungeonHeight;
     private int dungeonDepth;
@@ -40,14 +41,15 @@ public class DungeonBuilder {
         this.dungeon = new Tile[dungeonHeight][dungeonWidth][dungeonDepth];
         for (int i = 0; i < dungeonDepth; i++) {
             cells = buildCells();
-            roomsAtLevel = buildRoomList();
+            roomList = buildRoomList();
             //masterRoomList.addAll(Arrays.asList(roomsAtLevel));
-            dungeonlevel = buildDungeon(roomsAtLevel);
+            dungeonlevel = buildDungeon();
             for (int j = 0; j < dungeonlevel.length; j++) {
                 for (int k = 0; k < dungeonlevel[0].length; k++) {
                     dungeon[k][j][i] = dungeonlevel[k][j];
                 }
             }
+            curLevel++;
         }
 
     }
@@ -118,7 +120,7 @@ public class DungeonBuilder {
      * @param roomList
      * @return returns a dungeon
      */
-    public Tile[][] buildDungeon(Room[] roomList) {
+    public Tile[][] buildDungeon() {
 
         /*
          * Iterate through dungeon and set all tiles to OOB initially
@@ -207,6 +209,10 @@ public class DungeonBuilder {
          * @TODO Need to check the z level so up/down stairs aren't placed on 
          * first/last level
          */
+        
+        return dungeonlevel;
+    }
+    public void buildStairs(){
         int seedRoomDown1 = (int) (Math.random() * roomList.length - 1);
         int seedRoomDown2;
         do {
@@ -221,14 +227,20 @@ public class DungeonBuilder {
                 int height = roomList[i].getBotRightRow() - roomList[i].getTopLeftRow() - 1;
                 int stairX = (int) (Math.random() * width + roomList[i].getTopLeftCol()) + 1;
                 int stairY = (int) (Math.random() * height + roomList[i].getTopLeftRow()) + 1;
-
                 dungeonlevel[stairX][stairY] = Tile.DOWN;
+                /*
+                int stairUpX;
+                int stairUpY;
+                do{
+                    stairUpX = (int)(Math.random() * dungeonWidth);
+                    stairUpY = (int)(Math.random() * dungeonHeight);
+                }while(!tile(stairUpX,stairUpY,curLevel+1).isPassable());
                 
+                dungeon[stairUpX][stairUpY][curLevel+1] = Tile.UP;
+                * */
             }
         }
-        return dungeonlevel;
     }
-
     public void printDungeon() {
         for (int i = 0; i < dungeonlevel.length; i++) {
 
@@ -236,6 +248,13 @@ public class DungeonBuilder {
                 System.out.print(dungeonlevel[i][j].getGlyph());
             }
             System.out.println();
+        }
+    }
+    public Tile tile(int x, int y, int z) {
+        if (x < 0 || x >= dungeonWidth || y < 0 || y >= dungeonHeight) {
+            return Tile.OOB;
+        } else {
+            return dungeon[x][y][z];
         }
     }
 

@@ -50,6 +50,8 @@ public class Actor {
         Tile thisTile = dungeon.tile(posX, posY, posZ);
         if (mz == -1){
             if (thisTile == Tile.UP) {
+                System.out.println("actor: " + posX + posY + posZ);
+                System.out.println("tile: " + thisTile.toString());
                 Location target = thisTile.getConnection();
                 System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk up the stairs to level %d", posZ+mz+1);
@@ -60,6 +62,9 @@ public class Actor {
             }
         } else if (mz == 1){
             if (thisTile == Tile.DOWN) {
+                System.out.println("actor: " + posX + posY + posZ);
+                System.out.println("tile: " + thisTile.toString());
+                System.out.println(thisTile.getConnection());
                 Location target = thisTile.getConnection();
                 System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk down the stairs to level %d",posZ+mz+1);
@@ -71,9 +76,9 @@ public class Actor {
         }
         Actor occupant = dungeon.getActor(posX + mx, posY + my, posZ + mz);
 
-        if (occupant == null) {
+        if (mz == 0 && occupant == null) {
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
-        } else {
+        } else if (mz == 0 && occupant != null){
             attack(occupant);
         }
 

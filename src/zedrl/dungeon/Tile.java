@@ -49,6 +49,7 @@ public enum Tile
     public boolean isWall(){
         return this == WALL;
     }
+
     
     public void setConnection(int x, int y, int z){
         connection = new Location(x,y,z);

@@ -15,6 +15,9 @@ public class DungeonBuilder {
     private Tile[][][] dungeon;
     private Cell[][] cells;
     private Room[] roomsAtLevel;
+    private ArrayList<Location> stairListUp;
+    private ArrayList<Location> stairListDown;
+    private int stairCount;
     private int levelCounter;
     private int dungeonWidth;
     private int dungeonHeight;
@@ -37,23 +40,37 @@ public class DungeonBuilder {
         this.dungeonHeight = height;
         this.cellSize = cellSize;
         this.dungeonDepth = 10;
+        this.stairListUp = new ArrayList<>();
+        this.stairListDown = new ArrayList<>();
         this.dungeonlevel = new Tile[dungeonHeight][dungeonWidth];
         this.dungeon = new Tile[dungeonHeight][dungeonWidth][dungeonDepth];
         this.levelCounter = 0;
-        for (int i = 0; i < dungeonDepth; i++) {
+        for (int z = 0; z < dungeonDepth; z++) {
             cells = buildCells();
             roomsAtLevel = buildroomsAtLevel();
             //masterroomsAtLevel.addAll(Arrays.asList(roomsAtLevel));
             dungeonlevel = buildDungeon();
             buildStairs();
-            for (int j = 0; j < dungeonlevel.length; j++) {
-                for (int k = 0; k < dungeonlevel[0].length; k++) {
-                    dungeon[k][j][i] = dungeonlevel[k][j];
+            for (int x = 0; x < dungeonlevel.length; x++) {
+                for (int y = 0; y < dungeonlevel[0].length; y++) {
+                    dungeon[x][y][z] = dungeonlevel[x][y];
                 }
             }
             levelCounter++;
         }
-
+        buildConnections();
+        
+        for(int z = 0; z < dungeonDepth; z++){
+            for(int x = 0; x < dungeon.length; x++){
+                for(int y = 0; y < dungeon[0].length; y++){
+                    
+                    if(dungeon[x][y][z].isStair()){
+                        System.out.println("Stair at: " + "x: " + x + "y: "+ y + "z: " + z);
+                        System.out.println("Connected to: " + dungeon[y][x][z].getConnection());
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -75,11 +92,11 @@ public class DungeonBuilder {
         cellsHeight = dungeonHeight / cellSize;
         Cell[][] cells = new Cell[cellsHeight][cellsWidth];
 
-        for (int i = 0; i < dungeonHeight; i += cellSize) {
-            for (int j = 0; j < dungeonWidth; j += cellSize) {
+        for (int x = 0; x < dungeonHeight; x += cellSize) {
+            for (int y = 0; y < dungeonWidth; y += cellSize) {
 
-                cells[i / cellSize][j / cellSize] = new Cell(i, j, i + cellSize - 1,
-                        j + cellSize - 1);
+                cells[x / cellSize][y / cellSize] = new Cell(x, y, x + cellSize - 1,
+                        y + cellSize - 1);
 
             }
         }
@@ -127,10 +144,10 @@ public class DungeonBuilder {
         /*
          * Iterate through dungeon and set all tiles to OOB initially
          */
-        for (int i = 0; i < dungeonlevel.length; i++) {
+        for (int x = 0; x < dungeonlevel.length; x++) {
 
-            for (int j = 0; j < dungeonlevel[0].length; j++) {
-                dungeonlevel[i][j] = Tile.WALL;
+            for (int y = 0; y < dungeonlevel[0].length; y++) {
+                dungeonlevel[x][y] = Tile.WALL;
             }
         }
 
@@ -244,7 +261,7 @@ public class DungeonBuilder {
                     int stairY = (int) (Math.random() * height + roomsAtLevel[i].getTopLeftRow()) + 1;
 
                     dungeonlevel[stairX][stairY] = Tile.UP;
-                    dungeonlevel[stairX][stairY].setConnection(stairX, stairY, levelCounter);
+                    stairListUp.add(new Location(stairX,stairY,levelCounter));
                 }
             }
             
@@ -269,10 +286,26 @@ public class DungeonBuilder {
                     int stairY = (int) (Math.random() * height + roomsAtLevel[i].getTopLeftRow()) + 1;
 
                     dungeonlevel[stairX][stairY] = Tile.DOWN;
-                    dungeonlevel[stairX][stairY].setConnection(stairX, stairY, levelCounter);
+                    stairListDown.add(new Location(stairX,stairY,levelCounter));
 
                 }
             }
+    }
+    
+    private void buildConnections(){
+        this.stairCount = (stairListDown.size() + stairListUp.size() - 2)/2;
+        for(int i = 0; i < stairCount; i++){
+
+            Location locD = stairListDown.get(i);
+            Location locU = stairListUp.get(i);
+            
+            System.out.println(locD);
+            System.out.println(locU);
+            dungeon[locD.getX()][locD.getY()][locD.getZ()]
+                    .setConnection(locU.getX(), locU.getY(), locU.getZ());
+            dungeon[locU.getX()][locU.getY()][locU.getZ()]
+                    .setConnection(locD.getX(), locD.getY(), locD.getZ());
+        }
     }
 
     public void printDungeon() {

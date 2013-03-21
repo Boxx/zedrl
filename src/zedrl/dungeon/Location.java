@@ -13,6 +13,7 @@ import java.util.Collections;
  */
 public class Location {
     
+
     private int x;
     private int y;
     private int z;
@@ -21,6 +22,7 @@ public class Location {
         this.x = x;
         this.y = y;
         this.z = z;
+
     }
 
     @Override
@@ -93,6 +95,14 @@ public class Location {
     public void setZ(int z) {
         this.z = z;
     }
+
+    @Override
+    public String toString() {
+        return "Location{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
+    }
+
+
+
     
     
     

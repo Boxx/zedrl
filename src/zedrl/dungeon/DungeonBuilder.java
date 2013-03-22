@@ -59,14 +59,14 @@ public class DungeonBuilder {
             levelCounter++;
         }
         buildConnections();
-        
-        for(int z = 0; z < dungeonDepth; z++){
+        for(int z = 0; z < dungeon[0][0].length; z++){
             for(int x = 0; x < dungeon.length; x++){
                 for(int y = 0; y < dungeon[0].length; y++){
                     
                     if(dungeon[x][y][z].isStair()){
-                        System.out.println("Stair at: " + "x: " + x + "y: "+ y + "z: " + z);
-                        System.out.println("Connected to: " + dungeon[y][x][z].getConnection());
+                        
+                        //System.out.println("Stair at: " + "x: " + x + " y: "+ y + " z: " + z);
+                        //System.out.println("Connected to: " + dungeon[x][y][z].getConnection());
                     }
                 }
             }
@@ -147,7 +147,7 @@ public class DungeonBuilder {
         for (int x = 0; x < dungeonlevel.length; x++) {
 
             for (int y = 0; y < dungeonlevel[0].length; y++) {
-                dungeonlevel[x][y] = Tile.WALL;
+                dungeonlevel[x][y] = Tile.wall();
             }
         }
 
@@ -176,11 +176,11 @@ public class DungeonBuilder {
 
                     if (j == roomsAtLevel[i].getTopLeftRow() || j == roomsAtLevel[i].getBotRightRow()) {  // Handles the top and bottom sides of the rect
 
-                        dungeonlevel[k][j] = Tile.WALL;
+                        dungeonlevel[k][j] = Tile.wall();
                     } else if (k == roomsAtLevel[i].getTopLeftCol() || k == roomsAtLevel[i].getBotRightCol()) { // Left and Right
-                        dungeonlevel[k][j] = Tile.WALL;
+                        dungeonlevel[k][j] = Tile.wall();
                     } else {
-                        dungeonlevel[k][j] = Tile.FLOOR;
+                        dungeonlevel[k][j] = Tile.floor();
                     }
                 }
             }
@@ -196,22 +196,22 @@ public class DungeonBuilder {
             
             if (startY < targetY){
                 for(;startY < targetY; startY++){
-                    dungeonlevel[startX][startY] = Tile.FLOOR;
+                    dungeonlevel[startX][startY] = Tile.floor();
                 }
             }
             if (startY > targetY){
                 for(;startY > targetY; startY--){
-                    dungeonlevel[startX][startY] = Tile.FLOOR;
+                    dungeonlevel[startX][startY] = Tile.floor();
                 }
             }
             if (startX < targetX){
                 for(;startX < targetX; startX++){
-                    dungeonlevel[startX][targetY] = Tile.FLOOR;
+                    dungeonlevel[startX][targetY] = Tile.floor();
                 }
             }
             if (startX > targetX){
                 for(;startX > targetX; startX--){
-                    dungeonlevel[startX][targetY] = Tile.FLOOR;
+                    dungeonlevel[startX][targetY] = Tile.floor();
                 }
             }
             if (startX == targetX && startY == targetY){
@@ -233,10 +233,11 @@ public class DungeonBuilder {
     }
 
     private void buildStairs(){
+
         if(levelCounter == 0){
             buildDownStairs();
         }
-        else if(levelCounter == dungeonDepth){
+        else if(levelCounter == dungeonDepth - 1){
             buildUpStairs();
         }else{
             buildDownStairs();
@@ -260,7 +261,7 @@ public class DungeonBuilder {
                     int stairX = (int) (Math.random() * width + roomsAtLevel[i].getTopLeftCol()) + 1;
                     int stairY = (int) (Math.random() * height + roomsAtLevel[i].getTopLeftRow()) + 1;
 
-                    dungeonlevel[stairX][stairY] = Tile.UP;
+                    dungeonlevel[stairX][stairY] = Tile.up();
                     stairListUp.add(new Location(stairX,stairY,levelCounter));
                 }
             }
@@ -285,7 +286,7 @@ public class DungeonBuilder {
                     int stairX = (int) (Math.random() * width + roomsAtLevel[i].getTopLeftCol()) + 1;
                     int stairY = (int) (Math.random() * height + roomsAtLevel[i].getTopLeftRow()) + 1;
 
-                    dungeonlevel[stairX][stairY] = Tile.DOWN;
+                    dungeonlevel[stairX][stairY] = Tile.down();
                     stairListDown.add(new Location(stairX,stairY,levelCounter));
 
                 }
@@ -293,19 +294,27 @@ public class DungeonBuilder {
     }
     
     private void buildConnections(){
-        this.stairCount = (stairListDown.size() + stairListUp.size() - 2)/2;
+        stairCount = stairListDown.size();
+
+        Location locDown;
+        Location locUp;
         for(int i = 0; i < stairCount; i++){
 
-            Location locD = stairListDown.get(i);
-            Location locU = stairListUp.get(i);
+            locDown = stairListDown.get(i);
+            locUp = stairListUp.get(i);
             
-            System.out.println(locD);
-            System.out.println(locU);
-            dungeon[locD.getX()][locD.getY()][locD.getZ()]
-                    .setConnection(locU.getX(), locU.getY(), locU.getZ());
-            dungeon[locU.getX()][locU.getY()][locU.getZ()]
-                    .setConnection(locD.getX(), locD.getY(), locD.getZ());
+
+
+            dungeon[locDown.getX()][locDown.getY()][locDown.getZ()]
+                    .setConnection(locUp.getX(), locUp.getY(), locUp.getZ());
+
+            //System.out.println(dungeon[locDown.getX()][locDown.getY()][locDown.getZ()].getConnection());
+            dungeon[locUp.getX()][locUp.getY()][locUp.getZ()]
+                    .setConnection(locDown.getX(), locDown.getY(), locDown.getZ());
+            
+            
         }
+
     }
 
     public void printDungeon() {
@@ -319,7 +328,7 @@ public class DungeonBuilder {
     }
     public Tile tile(int x, int y, int z) {
         if (x < 0 || x >= dungeonWidth || y < 0 || y >= dungeonHeight) {
-            return Tile.OOB;
+            return Tile.oob();
         } else {
             return dungeon[x][y][z];
         }

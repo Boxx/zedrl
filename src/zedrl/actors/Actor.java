@@ -22,6 +22,7 @@ public class Actor {
     private int posZ;
     private char glyph;
     private Color color;
+    private int visionRad;
     public String name;
     public int totalHP;
     public int curHP;
@@ -34,7 +35,7 @@ public class Actor {
         this.color = color;
     }
 
-    public Actor(Dungeon dungeon, char glyph, Color color, String name, int totalHP, int atkVal, int defVal) {
+    public Actor(Dungeon dungeon, char glyph, Color color, String name, int totalHP, int atkVal, int defVal, int visionRad) {
         this.dungeon = dungeon;
         this.glyph = glyph;
         this.color = color;
@@ -43,16 +44,18 @@ public class Actor {
         this.attackVal = atkVal;
         this.defenseVal = defVal;
         this.curHP = totalHP;
+        this.visionRad = visionRad;
     }
 
     public void moveBy(int mx, int my, int mz) {
-        Tile targetTile = dungeon.tile(posX + mx, posY + my, posZ + mz);
+        Tile targetTile;
         Tile thisTile = dungeon.tile(posX, posY, posZ);
         if (mz == -1){
-            if (thisTile == Tile.UP) {
+            if (thisTile.isUpStair()) {
                 System.out.println("actor: " + posX + posY + posZ);
                 System.out.println("tile: " + thisTile.toString());
                 Location target = thisTile.getConnection();
+                targetTile = dungeon.tile(target.getX(),target.getY(),target.getZ());
                 System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk up the stairs to level %d", posZ+mz+1);
                 AI.enterTile(target.getX(),target.getY(),target.getZ(),targetTile);
@@ -61,11 +64,12 @@ public class Actor {
                 return;
             }
         } else if (mz == 1){
-            if (thisTile == Tile.DOWN) {
+            if (thisTile.isDownStair()) {
                 System.out.println("actor: " + posX + posY + posZ);
                 System.out.println("tile: " + thisTile.toString());
                 System.out.println(thisTile.getConnection());
                 Location target = thisTile.getConnection();
+                targetTile = dungeon.tile(target.getX(),target.getY(),target.getZ());
                 System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk down the stairs to level %d",posZ+mz+1);
                 AI.enterTile(target.getX(),target.getY(),target.getZ(),targetTile);
@@ -77,6 +81,7 @@ public class Actor {
         Actor occupant = dungeon.getActor(posX + mx, posY + my, posZ + mz);
 
         if (mz == 0 && occupant == null) {
+            targetTile = dungeon.tile(posX + mx, posY + my, posZ + mz);
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
         } else if (mz == 0 && occupant != null){
             attack(occupant);
@@ -208,4 +213,13 @@ public class Actor {
         return posZ;
     }
 
+    public int getVisionRad() {
+        return visionRad;
+    }
+    public boolean hasSightOf(int x, int y, int z){
+        return AI.hasSightOf(x,y,z);
+    }
+    public Tile lookAt(int x, int y, int z){
+        return dungeon.tile(x, y, z);
+    }
 }

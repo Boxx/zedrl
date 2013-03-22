@@ -4,6 +4,8 @@
  */
 package zedrl.actors;
 
+import zedrl.dungeon.Line;
+import zedrl.dungeon.Location;
 import zedrl.dungeon.Tile;
 
 /**
@@ -29,4 +31,23 @@ public class ActorAI {
         
 
     }
+
+    public boolean hasSightOf(int x, int y, int z) {
+        if (actor.getPosZ() != z){
+            return false;
+        }
+        if ((actor.getPosX() - x) * (actor.getPosX() - x) + (actor.getPosY() - y) * 
+                (actor.getPosY() - y) > actor.getVisionRad() * actor.getVisionRad()){
+            return false;
+        }
+        
+        for(Location p : new Line(actor.getPosX(), actor.getPosY(), x, y)){
+            if(actor.lookAt(p.getX(), p.getY(), z).isPassable() || p.getX() == x && p.getY() == y){
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+
 }

@@ -20,14 +20,14 @@ public class ActorBuilder {
     }
     
     public Actor newPlayer(ArrayList<String> messageQueue){
-        Actor player = new Actor(dungeon, '@', AsciiPanel.brightWhite, "Zedman", 100, 25, 5);
+        Actor player = new Actor(dungeon, '@', AsciiPanel.brightWhite, "Zedman", 100, 25, 5, 8);
         dungeon.addActor(player, 0);
         new PlayerAI(player, messageQueue);
         return player;
     }
     
     public Actor newFungus(){
-        Actor fungus = new Actor(dungeon, 'f', AsciiPanel.green, "fungus", 10, 0, 0);
+        Actor fungus = new Actor(dungeon, 'f', AsciiPanel.green, "fungus", 10, 0, 0, 0);
         dungeon.addActor(fungus, 0);
         new FungusAI(fungus, this);
         return fungus;
@@ -35,7 +35,7 @@ public class ActorBuilder {
     
     public Actor newGoblin(){
         
-        Actor goblin = new Actor(dungeon, 'g', AsciiPanel.red, "goblin", 15, 5, 1);
+        Actor goblin = new Actor(dungeon, 'g', AsciiPanel.red, "goblin", 15, 5, 1, 4);
         dungeon.addActor(goblin, 0);
         
         return null;

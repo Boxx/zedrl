@@ -80,7 +80,7 @@ public class Dungeon {
 
     public Tile tile(int x, int y, int z) {
         if (x < 0 || x >= width || y < 0 || y >= height) {
-            return Tile.OOB;
+            return Tile.oob();
         } else {
             return tiles[x][y][z];
         }

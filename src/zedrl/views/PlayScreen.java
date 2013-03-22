@@ -5,6 +5,7 @@
 package zedrl.views;
 
 import asciiPanel.AsciiPanel;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import zedrl.actors.Actor;
@@ -49,11 +50,15 @@ class PlayScreen implements Screen {
             for (int j = 0; j < screenH; j++) {
                 int dx = i + left;
                 int dy = j + top;
-                Actor actor = dungeon.getActor(dx, dy, player.getPosZ());
-                if(actor != null){
-                    term.write(actor.getGlyph(), actor.getPosX() - left, actor.getPosY() - top, actor.getColor());
+                if(player.hasSightOf(dx, dy, player.getPosZ())){
+                    Actor actor = dungeon.getActor(dx, dy, player.getPosZ());
+                    if(actor != null){
+                        term.write(actor.getGlyph(), actor.getPosX() - left, actor.getPosY() - top, actor.getColor());
+                    }else{
+                        term.write(dungeon.glyph(dx, dy, player.getPosZ()),i,j,dungeon.color(dx, dy, player.getPosZ()));
+                    }
                 }else{
-                    term.write(dungeon.glyph(dx, dy, player.getPosZ()),i,j,dungeon.color(dx, dy, player.getPosZ()));
+                    term.write(dungeon.glyph(dx, dy, player.getPosZ()), i, j, Color.darkGray);
                 }
             }
         }
@@ -82,6 +87,7 @@ class PlayScreen implements Screen {
         
         String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
         term.write(stats, 55, 2);
+        
     }
     
 

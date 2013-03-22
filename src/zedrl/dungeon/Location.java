@@ -25,6 +25,11 @@ public class Location {
 
     }
 
+    Location() {
+        this.x = this.y = this.z = 0;
+        
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

@@ -90,13 +90,20 @@ public class Dungeon {
      */
 
     public char glyph(int x, int y, int z) {
-        return tile(x, y, z).getGlyph();
+        Actor actor = getActor(x, y, z);
+        return actor != null ? actor.getGlyph() : tile(x, y, z).getGlyph();
     }
     /*
      * Returns the tile color at a given position
      */
 
     public Color color(int x, int y, int z) {
-        return tile(x, y, z).getColor();
+        Actor actor = getActor(x, y, z);
+        return actor != null ? actor.getColor() : tile(x, y, z).getColor();
     }
+
+    public int getDepth() {
+        return depth;
+    }
+    
 }

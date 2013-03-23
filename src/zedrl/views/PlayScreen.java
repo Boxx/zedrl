@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import zedrl.actors.Actor;
 import zedrl.actors.ActorBuilder;
+import zedrl.actors.FieldOfView;
 import zedrl.dungeon.Dungeon;
 import zedrl.dungeon.DungeonBuilder;
 
@@ -24,12 +25,14 @@ class PlayScreen implements Screen {
     private ArrayList<String> messageQueue;
     private int screenW;
     private int screenH;
+    private FieldOfView FOV;
 
     public PlayScreen() {
         screenW = 50;
         screenH = 20;
         messageQueue = new ArrayList<>();
         createDungeon();
+        FOV = new FieldOfView(dungeon);
         ActorBuilder ab = new ActorBuilder(dungeon);
         createActors(ab);
     }
@@ -38,7 +41,7 @@ class PlayScreen implements Screen {
         dungeon = new DungeonBuilder(50, 50, 10).build();
     }
     private void createActors(ActorBuilder ab){
-        player = ab.newPlayer(messageQueue);
+        player = ab.newPlayer(messageQueue,FOV);
         
         for (int i = 0; i < 10; i++){
             ab.newFungus();
@@ -46,19 +49,15 @@ class PlayScreen implements Screen {
     }
 
     private void displayDungeon(AsciiPanel term, int left, int top) {
+        FOV.update(player.getPosX(), player.getPosY(), player.getPosZ(), player.getVisionRad());
         for (int i = 0; i < screenW; i++) {
             for (int j = 0; j < screenH; j++) {
                 int dx = i + left;
                 int dy = j + top;
                 if(player.hasSightOf(dx, dy, player.getPosZ())){
-                    Actor actor = dungeon.getActor(dx, dy, player.getPosZ());
-                    if(actor != null){
-                        term.write(actor.getGlyph(), actor.getPosX() - left, actor.getPosY() - top, actor.getColor());
-                    }else{
-                        term.write(dungeon.glyph(dx, dy, player.getPosZ()),i,j,dungeon.color(dx, dy, player.getPosZ()));
-                    }
+                    term.write(dungeon.glyph(dx, dy, player.getPosZ()),i,j,dungeon.color(dx, dy, player.getPosZ()));
                 }else{
-                    term.write(dungeon.glyph(dx, dy, player.getPosZ()), i, j, Color.darkGray);
+                    term.write(FOV.getTile(dx, dy, player.getPosZ()).getGlyph(),i,j,Color.darkGray);
                 }
             }
         }

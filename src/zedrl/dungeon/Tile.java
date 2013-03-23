@@ -37,6 +37,9 @@ public class Tile
     public static Tile down(){
         return new Tile('>', AsciiPanel.white, true);
     }
+    public static Tile unknown(){
+        return new Tile(' ', AsciiPanel.white, true);
+    }
     public char getGlyph()
     {
         return glyph;

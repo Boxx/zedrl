@@ -19,10 +19,10 @@ public class ActorBuilder {
         this.dungeon = dungeon;
     }
     
-    public Actor newPlayer(ArrayList<String> messageQueue){
+    public Actor newPlayer(ArrayList<String> messageQueue, FieldOfView FOV){
         Actor player = new Actor(dungeon, '@', AsciiPanel.brightWhite, "Zedman", 100, 25, 5, 8);
         dungeon.addActor(player, 0);
-        new PlayerAI(player, messageQueue);
+        new PlayerAI(player, messageQueue, FOV);
         return player;
     }
     

@@ -14,11 +14,13 @@ import zedrl.dungeon.Tile;
 public class PlayerAI extends ActorAI {
     
     private ArrayList<String> messageQueue;
+    private FieldOfView FOV;
     
-    public PlayerAI(Actor actor, ArrayList<String> messageQueue){
+    public PlayerAI(Actor actor, ArrayList<String> messageQueue, FieldOfView FOV){
         
         super(actor);
         this.messageQueue = messageQueue;
+        this.FOV = FOV;
     }
     
     @Override
@@ -36,6 +38,10 @@ public class PlayerAI extends ActorAI {
     @Override
     public void getMessage(String msg){
         messageQueue.add(msg);
+    }
+    
+    public boolean canSee(int vx, int vy, int vz){
+        return FOV.isVisable(vx, vy, vz);
     }
     
 }

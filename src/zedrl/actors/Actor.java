@@ -50,29 +50,29 @@ public class Actor {
     public void moveBy(int mx, int my, int mz) {
         Tile targetTile;
         Tile thisTile = dungeon.tile(posX, posY, posZ);
-        if (mz == -1){
+        if (mz == -1) {
             if (thisTile.isUpStair()) {
                 System.out.println("actor: " + posX + posY + posZ);
                 System.out.println("tile: " + thisTile.toString());
                 Location target = thisTile.getConnection();
-                targetTile = dungeon.tile(target.getX(),target.getY(),target.getZ());
+                targetTile = dungeon.tile(target.getX(), target.getY(), target.getZ());
                 System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
-                doAction("walk up the stairs to level %d", posZ+mz+1);
-                AI.enterTile(target.getX(),target.getY(),target.getZ(),targetTile);
+                doAction("walk up the stairs to level %d", posZ + mz + 1);
+                AI.enterTile(target.getX(), target.getY(), target.getZ(), targetTile);
             } else {
                 doAction("try to go up but are stopped by the ceiling");
                 return;
             }
-        } else if (mz == 1){
+        } else if (mz == 1) {
             if (thisTile.isDownStair()) {
                 System.out.println("actor: " + posX + posY + posZ);
                 System.out.println("tile: " + thisTile.toString());
                 System.out.println(thisTile.getConnection());
                 Location target = thisTile.getConnection();
-                targetTile = dungeon.tile(target.getX(),target.getY(),target.getZ());
+                targetTile = dungeon.tile(target.getX(), target.getY(), target.getZ());
                 System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
-                doAction("walk down the stairs to level %d",posZ+mz+1);
-                AI.enterTile(target.getX(),target.getY(),target.getZ(),targetTile);
+                doAction("walk down the stairs to level %d", posZ + mz + 1);
+                AI.enterTile(target.getX(), target.getY(), target.getZ(), targetTile);
             } else {
                 doAction("try to go down but are stopped by the floor");
                 return;
@@ -83,24 +83,25 @@ public class Actor {
         if (mz == 0 && occupant == null) {
             targetTile = dungeon.tile(posX + mx, posY + my, posZ + mz);
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
-        } else if (mz == 0 && occupant != null){
+        } else if (mz == 0 && occupant != null) {
             attack(occupant);
         }
 
     }
 
-
     public void attack(Actor occupant) {
+        if (occupant.getGlyph() != this.getGlyph()) {
+            int dmg = Math.max(0, getAtkVal() - occupant.getDefVal());
+            dmg = (int) (Math.random() * dmg) + 1;
+            occupant.setHP(-dmg);
 
-        int dmg = Math.max(0, getAtkVal() - occupant.getDefVal());
-        dmg = (int) (Math.random() * dmg) + 1;
-        occupant.setHP(-dmg);
-
-        sendMessage("You hit the %s for %d damage", occupant.name, dmg);
-        if (occupant.getCurHP() <= 0) {
-            sendMessage("You killed the %s!", occupant.name);
+            doAction("hit the %s for %d damage", occupant.name, dmg);
+            if (occupant.getCurHP() <= 0) {
+                doAction("killed the %s!", occupant.name);
+            }
+            occupant.doAction("hit you!  It strikes for %d damage.",dmg);
         }
-        occupant.sendMessage("%s hits you!  It strikes for %d damage.", name, dmg);
+
 
     }
 
@@ -142,7 +143,7 @@ public class Actor {
                 if (other == this) {
                     other.sendMessage("You " + message + ".", params);
                 } else {
-                    other.sendMessage(String.format("The '%s' %s.", glyph, makeSecondPerson(message)), params);
+                    other.sendMessage(String.format("The '%s' %s.", name, makeSecondPerson(message)), params);
                 }
             }
         }
@@ -205,7 +206,7 @@ public class Actor {
         this.AI = AI;
     }
 
-    void setPosZ(int posZ) {
+    public void setPosZ(int posZ) {
         this.posZ = posZ;
     }
 
@@ -216,10 +217,13 @@ public class Actor {
     public int getVisionRad() {
         return visionRad;
     }
-    public boolean hasSightOf(int x, int y, int z){
-        return AI.hasSightOf(x,y,z);
+
+    public boolean hasSightOf(int x, int y, int z) {
+        return AI.hasSightOf(x, y, z);
     }
-    public Tile lookAt(int x, int y, int z){
+
+    public Tile lookAt(int x, int y, int z) {
         return dungeon.tile(x, y, z);
     }
+
 }

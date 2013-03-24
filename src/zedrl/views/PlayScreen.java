@@ -40,12 +40,19 @@ class PlayScreen implements Screen {
     private void createDungeon() {
         dungeon = new DungeonBuilder(50, 50, 10).build();
     }
-    private void createActors(ActorBuilder ab){
-        player = ab.newPlayer(messageQueue,FOV);
-        
-        for (int i = 0; i < 10; i++){
-            ab.newFungus();
+
+    private void createActors(ActorBuilder ab) {
+        player = ab.newPlayer(messageQueue, FOV);
+
+        for (int z = 0; z < dungeon.getDepth(); z++) {
+            for (int i = 0; i < 10; i++) {
+                ab.newFungus(z);
+            }
+            for(int i = 0; i < 10; i++){
+                ab.newBat(z);
+            }
         }
+
     }
 
     private void displayDungeon(AsciiPanel term, int left, int top) {
@@ -54,16 +61,16 @@ class PlayScreen implements Screen {
             for (int j = 0; j < screenH; j++) {
                 int dx = i + left;
                 int dy = j + top;
-                if(player.hasSightOf(dx, dy, player.getPosZ())){
-                    term.write(dungeon.glyph(dx, dy, player.getPosZ()),i,j,dungeon.color(dx, dy, player.getPosZ()));
-                }else{
-                    term.write(FOV.getTile(dx, dy, player.getPosZ()).getGlyph(),i,j,Color.darkGray);
+                if (player.hasSightOf(dx, dy, player.getPosZ())) {
+                    term.write(dungeon.glyph(dx, dy, player.getPosZ()), i, j, dungeon.color(dx, dy, player.getPosZ()));
+                } else {
+                    term.write(FOV.getTile(dx, dy, player.getPosZ()).getGlyph(), i, j, Color.darkGray);
                 }
             }
         }
-           
+
     }
-    
+
     @Override
     public void displayOutput(AsciiPanel term) {
         int left = getScrollX();
@@ -71,70 +78,113 @@ class PlayScreen implements Screen {
         displayDungeon(term, left, top);
         displayStats(term);
         displayMessages(term, messageQueue);
-        
+
     }
-    
-    public void displayMessages(AsciiPanel term, ArrayList<String> messageQueue){
-        
-        for (int i = 0; i < messageQueue.size(); i++){
+
+    public void displayMessages(AsciiPanel term, ArrayList<String> messageQueue) {
+
+        for (int i = 0; i < messageQueue.size(); i++) {
             String msg = messageQueue.get(i);
             term.write(msg, 1, 21 + i);
         }
         messageQueue.clear();
     }
-    public void displayStats(AsciiPanel term){
-        
+
+    public void displayStats(AsciiPanel term) {
+
         String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
         term.write(stats, 55, 2);
-        
+
     }
-    
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-            switch (key.getKeyCode()) {
+        switch (key.getKeyCode()) {
             case KeyEvent.VK_NUMPAD4:
-                player.moveBy(-1,0,0); 
+                player.moveBy(-1, 0, 0);
+                break;
+            case KeyEvent.VK_LEFT:
+                player.moveBy(-1, 0, 0);
+                break;
+            case KeyEvent.VK_H:
+                player.moveBy(-1, 0, 0);
                 break;
             case KeyEvent.VK_NUMPAD6:
-                player.moveBy(1,0,0); 
+                player.moveBy(1, 0, 0);
+                break;
+            case KeyEvent.VK_RIGHT:
+                player.moveBy(1, 0, 0);
+                break;
+            case KeyEvent.VK_L:
+                player.moveBy(1, 0, 0);
                 break;
             case KeyEvent.VK_NUMPAD8:
-                player.moveBy(0,-1,0); 
+                player.moveBy(0, -1, 0);
+                break;
+            case KeyEvent.VK_UP:
+                player.moveBy(0, -1, 0);
+                break;
+            case KeyEvent.VK_K:
+                player.moveBy(0, -1, 0);
                 break;
             case KeyEvent.VK_NUMPAD2:
-                player.moveBy(0,1,0); 
+                player.moveBy(0, 1, 0);
+                break;
+            case KeyEvent.VK_DOWN:
+                player.moveBy(0, 1, 0);
+                break;
+            case KeyEvent.VK_J:
+                player.moveBy(0, 1, 0);
                 break;
             case KeyEvent.VK_NUMPAD7:
-                player.moveBy(-1,-1,0); 
+                player.moveBy(-1, -1, 0);
+                break;
+            case KeyEvent.VK_Y:
+                player.moveBy(-1, -1, 0);
                 break;
             case KeyEvent.VK_NUMPAD9:
-                player.moveBy(1,-1,0); 
+                player.moveBy(1, -1, 0);
+                break;
+            case KeyEvent.VK_U:
+                player.moveBy(1, -1, 0);
                 break;
             case KeyEvent.VK_NUMPAD1:
-                player.moveBy(-1,1,0); 
+                player.moveBy(-1, 1, 0);
+                break;
+            case KeyEvent.VK_B:
+                player.moveBy(-1, 1, 0);
                 break;
             case KeyEvent.VK_NUMPAD3:
-                player.moveBy(1,1,0); 
+                player.moveBy(1, 1, 0);
                 break;
-            
-            } 
-            switch (key.getKeyChar()){
-                case '<':
-                    player.moveBy(0, 0, -1);
-                    break;
-                case '>':
-                    player.moveBy(0, 0, 1);
-                    break;
-            }
-        
+            case KeyEvent.VK_N:
+                player.moveBy(1, 1, 0);
+                break;
+            case KeyEvent.VK_PERIOD: // Waits a turn
+                dungeon.update();
+                player.sendMessage("You wait a turn");
+                break;
+
+        }
+        switch (key.getKeyChar()) {
+            case '<':
+                player.moveBy(0, 0, -1);
+                break;
+            case '>':
+                player.moveBy(0, 0, 1);
+                break;
+        }
+
         dungeon.update();
         return this;
     }
+
     public int getScrollX() {
-        return Math.max(0, Math.min(player.getPosX() - screenW/2, dungeon.getWidth() - screenW));
+        return Math.max(0, Math.min(player.getPosX() - screenW / 2, dungeon.getWidth() - screenW));
     }
+
     public int getScrollY() {
-        return Math.max(0, Math.min(player.getPosY() - screenH/2, dungeon.getHeight() - screenH));
+        return Math.max(0, Math.min(player.getPosY() - screenH / 2, dungeon.getHeight() - screenH));
     }
+
 }

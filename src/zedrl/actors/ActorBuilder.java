@@ -26,19 +26,29 @@ public class ActorBuilder {
         return player;
     }
     
-    public Actor newFungus(){
+    public Actor newFungus(int z){
         Actor fungus = new Actor(dungeon, 'f', AsciiPanel.green, "fungus", 10, 0, 0, 0);
-        dungeon.addActor(fungus, 0);
+        dungeon.addActor(fungus, z);
         new FungusAI(fungus, this);
         return fungus;
     }
     
-    public Actor newGoblin(){
+    public Actor newGoblin(int z){
         
         Actor goblin = new Actor(dungeon, 'g', AsciiPanel.red, "goblin", 15, 5, 1, 4);
         dungeon.addActor(goblin, 0);
         
         return null;
+        
+    }
+    
+    public Actor newBat(int z){
+        
+        Actor bat = new Actor(dungeon, 'b', AsciiPanel.brightBlack, "bat", 5, 1, 1, 10);
+        dungeon.addActor(bat, z);
+        new BatAI(bat);
+        return bat;
+        
         
     }
 }

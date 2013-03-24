@@ -35,7 +35,7 @@ public class FungusAI extends ActorAI {
             return;
         }
         
-        Actor baby = ab.newFungus();
+        Actor baby = ab.newFungus(z);
         baby.setPosX(x);
         baby.setPosY(y);
         counter++;

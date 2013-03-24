@@ -42,6 +42,7 @@ public class Dungeon {
         
         actor.setPosX(x);
         actor.setPosY(y);
+        actor.setPosZ(z);
         actorList.add(actor);
     }
     

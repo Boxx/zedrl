@@ -20,7 +20,20 @@ public class ActorAI {
         this.actor.setAI(this);
     }
     public void enterTile(int x, int y, int z, Tile tile){
-
+        
+        if(tile.isPassable()){
+            actor.setPosX(x);
+            actor.setPosY(y);
+            actor.setPosZ(z);
+        }else{
+            
+        }
+    }
+    public void roam(){
+        int rx = (int)(Math.random() * 3) - 1;
+        int ry = (int)(Math.random() * 3) - 1;
+        actor.moveBy(rx, ry, 0);
+        
     }
 
     public void update() {

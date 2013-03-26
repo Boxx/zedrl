@@ -5,13 +5,14 @@
 package zedrl.views;
 import asciiPanel.AsciiPanel;
 import java.awt.event.KeyEvent;
+import squidpony.squidgrid.gui.swing.SwingPane;
 /**
  *
  * @author Brandon
  */
 public interface Screen
 {
-    public void displayOutput(AsciiPanel term);
+    public void displayOutput(SwingPane display);
     
     public Screen respondToUserInput(KeyEvent key);
 }

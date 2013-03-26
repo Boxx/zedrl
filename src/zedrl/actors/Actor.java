@@ -5,6 +5,7 @@
 package zedrl.actors;
 
 import java.awt.Color;
+import squidpony.squidcolor.SColor;
 import zedrl.dungeon.Dungeon;
 import zedrl.dungeon.Location;
 import zedrl.dungeon.Tile;
@@ -21,7 +22,7 @@ public class Actor {
     private int posY;
     private int posZ;
     private char glyph;
-    private Color color;
+    private SColor color;
     private int visionRad;
     public String name;
     public int totalHP;
@@ -29,13 +30,13 @@ public class Actor {
     public int attackVal;
     public int defenseVal;
 
-    public Actor(Dungeon dungeon, char glyph, Color color) {
+    public Actor(Dungeon dungeon, char glyph, SColor color) {
         this.dungeon = dungeon;
         this.glyph = glyph;
         this.color = color;
     }
 
-    public Actor(Dungeon dungeon, char glyph, Color color, String name, int totalHP, int atkVal, int defVal, int visionRad) {
+    public Actor(Dungeon dungeon, char glyph, SColor color, String name, int totalHP, int atkVal, int defVal, int visionRad) {
         this.dungeon = dungeon;
         this.glyph = glyph;
         this.color = color;
@@ -48,6 +49,9 @@ public class Actor {
     }
 
     public void moveBy(int mx, int my, int mz) {
+        if(mx == 0 && my == 0 && mz == 0){
+            return;
+        }
         Tile targetTile;
         Tile thisTile = dungeon.tile(posX, posY, posZ);
         if (mz == -1) {
@@ -88,6 +92,9 @@ public class Actor {
         }
 
     }
+    public Actor findActor(int x, int y, int z){
+        return dungeon.getActor(x, y, z);
+    }
 
     public void attack(Actor occupant) {
         if (occupant.getGlyph() != this.getGlyph()) {
@@ -99,7 +106,7 @@ public class Actor {
             if (occupant.getCurHP() <= 0) {
                 doAction("killed the %s!", occupant.name);
             }
-            occupant.doAction("hit you!  It strikes for %d damage.",dmg);
+            //occupant.doAction("hit you!  It strikes for %d damage.",dmg);
         }
 
 
@@ -182,7 +189,7 @@ public class Actor {
         return glyph;
     }
 
-    public Color getColor() {
+    public SColor getColor() {
         return color;
     }
 

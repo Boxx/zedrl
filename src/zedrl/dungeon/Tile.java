@@ -4,8 +4,8 @@
  */
 package zedrl.dungeon;
 
-import java.awt.Color;
-import asciiPanel.AsciiPanel;
+import squidpony.squidcolor.SColor;
+import zedrl.dungeon.Location;
 
 /**
  *
@@ -17,44 +17,47 @@ public class Tile
 
     
     private char glyph;
-    private Color color;
+    private SColor color;
     private Location connection;
     public boolean passable;
+    private float resistance = 0f;
 
     
     public static Tile floor(){
-        return new Tile((char) 250, AsciiPanel.yellow, true);
+        return new Tile('.', SColor.SLATE_GRAY,0f, true);
     }
     public static Tile wall(){
-        return new Tile((char) 177, AsciiPanel.white, false);
+        return new Tile('#', SColor.SLATE_GRAY,1f, false);
     }
     public static Tile oob(){
-        return new Tile('x', AsciiPanel.brightBlack, false);
+        return new Tile('x', SColor.BLACK,1f, false);
     }
     public static Tile up(){
-        return new Tile('<', AsciiPanel.white, true);
+        return new Tile('<', SColor.YELLOW,0f, true);
     }
     public static Tile down(){
-        return new Tile('>', AsciiPanel.white, true);
+        return new Tile('>', SColor.YELLOW,0f, true);
     }
     public static Tile unknown(){
-        return new Tile(' ', AsciiPanel.white, true);
+        return new Tile(' ', SColor.WHITE,1f, true);
     }
     public char getGlyph()
     {
         return glyph;
     }
 
-    public Color getColor()
+    public SColor getColor()
     {
         return color;
     }
 
-    Tile(char glyph, Color color, boolean passable)
+    Tile(char glyph, SColor color, float resistance, boolean passable)
     {
         this.glyph = glyph;
         this.color = color;
         this.passable = passable;
+        this.resistance = resistance;
+        
     }
     public boolean isPassable(){
         return passable;
@@ -82,4 +85,8 @@ public class Tile
         return connection;
     }
 
+    public float getResistance() {
+        return resistance;
+    }
+    
 }

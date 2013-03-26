@@ -7,6 +7,7 @@ package zedrl.dungeon;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import squidpony.squidcolor.SColor;
 import zedrl.actors.Actor;
 import zedrl.utilities.Roller;
 
@@ -98,7 +99,7 @@ public class Dungeon {
      * Returns the tile color at a given position
      */
 
-    public Color color(int x, int y, int z) {
+    public SColor color(int x, int y, int z) {
         Actor actor = getActor(x, y, z);
         return actor != null ? actor.getColor() : tile(x, y, z).getColor();
     }

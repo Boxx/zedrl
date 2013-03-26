@@ -32,8 +32,13 @@ public class ActorAI {
     public void roam(){
         int rx = (int)(Math.random() * 3) - 1;
         int ry = (int)(Math.random() * 3) - 1;
-        actor.moveBy(rx, ry, 0);
         
+        Actor occupant = actor.findActor(actor.getPosX() + rx, actor.getPosY() + ry,actor.getPosZ());
+        if(occupant != null && occupant.getGlyph() == actor.getGlyph()){
+            return;
+        }else{
+            actor.moveBy(rx, ry, 0);
+        }
     }
 
     public void update() {

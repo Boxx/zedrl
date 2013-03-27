@@ -24,7 +24,7 @@ import zedrl.dungeon.DungeonBuilder;
  *
  * @author Brandon
  */
-public class PlayScreen {
+public class PlayScreen implements Screen {
 
     private Dungeon dungeon;
     private Actor player;
@@ -35,34 +35,36 @@ public class PlayScreen {
     private JFrame frame;
     private SwingPane display;
     private StatusMessagePanel statusPanel;
+    private PlayerInfoPanel infoPanel;
     private int tileWidth;
     private int tileHeight;
     private int width;
     private int height;
     private int depth;
 
-    public PlayScreen() {
+    public PlayScreen(JFrame frame, SwingPane display) {
 
         messageQueue = new ArrayList<>();
         createDungeon();
         screenW = 50;
         screenH = 24;
+        width = 50;
+        height = 24;
         FOV = new FieldOfView(dungeon);
         ActorBuilder ab = new ActorBuilder(dungeon);
         createActors(ab);
-
-        width = 50;
-        height = 24;
+        this.frame = frame;
+        this.display = display;
         depth = dungeon.getDepth();
-        frame = new JFrame("Squid Test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        display = new SwingPane();
-        display.initialize(width, height, new Font("Arial Black",Font.PLAIN, 18));
-        displayOutput();
-        frame.add(display, BorderLayout.NORTH);
+        frame.add(display);
         statusPanel = new StatusMessagePanel();
+        infoPanel = new PlayerInfoPanel();
+        frame.add(infoPanel, BorderLayout.EAST);
         frame.add(statusPanel, BorderLayout.SOUTH);
+        displayOutput();
+        
+        
         frame.setVisible(true);
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -119,7 +121,7 @@ public class PlayScreen {
         int left = getScrollX();
         int top = getScrollY();
         displayDungeon(display, left, top);
-        //displayStats(term);
+        displayStats();
         displayMessages(messageQueue);
 
     }
@@ -135,9 +137,11 @@ public class PlayScreen {
         messageQueue.clear();
     }
 
-    public void displayStats(SwingPane display) {
-
-        String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
+    public void displayStats() {
+        
+        int hp = player.getCurHP();
+        infoPanel.setHPBar(hp);
+        //String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
         //term.write(stats, 55, 2);
 
     }
@@ -148,6 +152,16 @@ public class PlayScreen {
 
     public int getScrollY() {
         return Math.max(0, Math.min(player.getPosY() - screenH / 2, dungeon.getHeight() - screenH));
+    }
+
+    @Override
+    public void displayOutput(SwingPane display) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Screen respondToUserInput(KeyEvent key) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private class InputListener implements KeyListener {
@@ -253,8 +267,5 @@ public class PlayScreen {
 
         }
 
-    }
-    public static void main(String[] args){
-        new PlayScreen();
     }
 }

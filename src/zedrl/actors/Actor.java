@@ -104,7 +104,7 @@ public class Actor {
 
             doAction("hit the %s for %d damage", occupant.name, dmg);
             if (occupant.getCurHP() <= 0) {
-                doAction("killed the %s!", occupant.name);
+                doAction("killed the %s", occupant.name);
             }
             //occupant.doAction("hit you!  It strikes for %d damage.",dmg);
         }
@@ -150,7 +150,7 @@ public class Actor {
                 if (other == this) {
                     other.sendMessage("You " + message + ".", params);
                 } else {
-                    other.sendMessage(String.format("The '%s' %s.", name, makeSecondPerson(message)), params);
+                    other.sendMessage(String.format("The %s %s.", name, makeSecondPerson(message)), params);
                 }
             }
         }

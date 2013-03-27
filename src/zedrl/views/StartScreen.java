@@ -4,6 +4,7 @@
  */
 package zedrl.views;
 import asciiPanel.AsciiPanel;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
@@ -16,20 +17,22 @@ import squidpony.squidgrid.gui.swing.SwingPane;
  */
 public class StartScreen implements Screen, KeyListener
 {
-    public JFrame frame;
+    private JFrame frame;
     private SwingPane display;
     
     public StartScreen(){
         frame = new JFrame("Welcome to ZedRL!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         display = new SwingPane();
-        display.initialize(50, 50, new Font("Arial Black", Font.BOLD, 24));
+        display.initialize(50, 24, new Font("Arial Black",Font.PLAIN, 18));
         frame.add(display);
-        display.placeHorizontalString(25, 25, "Welcome", Color.red, Color.darkGray);
+        //display.placeHorizontalString(0, 0, "Welcome", Color.red, Color.darkGray);
         display.refresh();
+        
         frame.setVisible(true);
         frame.pack();
         frame.repaint();
+        frame.setLocationRelativeTo(null);
         frame.addKeyListener(this);
     }
     @Override
@@ -44,9 +47,7 @@ public class StartScreen implements Screen, KeyListener
     {
         if (key.getKeyCode() == KeyEvent.VK_ENTER)
         {
-            System.out.println("Attempting to return a PlayScreen");
-            frame.dispose();
-            return (Screen) new PlayScreen();
+            return new PlayScreen(frame, display);
         } else
         {
             return this;

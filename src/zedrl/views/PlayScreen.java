@@ -17,6 +17,7 @@ import squidpony.squidgrid.gui.swing.SwingPane;
 import zedrl.actors.Actor;
 import zedrl.actors.ActorBuilder;
 import zedrl.actors.FieldOfView;
+import zedrl.actors.ItemBuilder;
 import zedrl.dungeon.Dungeon;
 import zedrl.dungeon.DungeonBuilder;
 
@@ -52,7 +53,9 @@ public class PlayScreen implements Screen {
         height = 24;
         FOV = new FieldOfView(dungeon);
         ActorBuilder ab = new ActorBuilder(dungeon);
+        ItemBuilder ib = new ItemBuilder(dungeon);
         createActors(ab);
+        createItems(ib);
         this.frame = frame;
         this.display = display;
         depth = dungeon.getDepth();
@@ -94,6 +97,13 @@ public class PlayScreen implements Screen {
         }
 
     }
+    private void createItems(ItemBuilder ib){
+        for(int z = 0; z < dungeon.getDepth(); z++){
+            for (int i = 0; i < dungeon.getWidth() * dungeon.getHeight() / 20; i++){
+                ib.newStone(z);
+            }
+        }
+    }
 
     private void displayDungeon(SwingPane display, int left, int top) {
         FOV.update(player.getPosX(), player.getPosY(), player.getPosZ(), player.getVisionRad());
@@ -107,7 +117,7 @@ public class PlayScreen implements Screen {
                     //term.write(dungeon.glyph(dx, dy, player.getPosZ()), i, j, dungeon.color(dx, dy, player.getPosZ()));
                 } else {
                     
-                    display.placeCharacter(i, j, FOV.getTile(dx, dy, player.getPosZ()).getGlyph(), SColor.GRAY);
+                    display.placeCharacter(i, j, FOV.getTile(dx, dy, player.getPosZ()).getGlyph(), SColor.INK);
                     //term.write(FOV.getTile(dx, dy, player.getPosZ()).getGlyph(), i, j, Color.darkGray);
                 }
             }

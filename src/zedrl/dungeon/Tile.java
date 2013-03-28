@@ -27,7 +27,7 @@ public class Tile
         return new Tile('.', SColor.SLATE_GRAY,0f, true);
     }
     public static Tile wall(){
-        return new Tile('#', SColor.SLATE_GRAY,1f, false);
+        return new Tile((char)2588, SColor.YELLOW,1f, false);
     }
     public static Tile oob(){
         return new Tile('x', SColor.BLACK,1f, false);

@@ -5,6 +5,8 @@
 package zedrl.actors;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import squidpony.squidcolor.SColor;
 import zedrl.dungeon.Dungeon;
 import zedrl.dungeon.Location;
@@ -23,6 +25,7 @@ public class Actor {
     private int posZ;
     private char glyph;
     private SColor color;
+    private Inventory inventory;
     private int visionRad;
     public String name;
     public int totalHP;
@@ -46,6 +49,7 @@ public class Actor {
         this.defenseVal = defVal;
         this.curHP = totalHP;
         this.visionRad = visionRad;
+        this.inventory = new Inventory(20);
     }
 
     public void moveBy(int mx, int my, int mz) {
@@ -111,6 +115,16 @@ public class Actor {
 
 
     }
+    public void pickUp(){
+        List<Item> itemsHere = dungeon.getItems(posX, posY, posZ);
+        
+        if(itemsHere.size() == 1){
+            doAction("pick up a %s", itemsHere.get(0).getName());
+            Item thisItem = itemsHere.get(0);
+            dungeon.deleteItem(itemsHere, itemsHere.get(0), posX, posY, posZ);
+            inventory.add(thisItem);
+        }
+    }
 
     public void update() {
         AI.update();
@@ -124,7 +138,7 @@ public class Actor {
         curHP += value;
 
         if (curHP < 1) {
-            dungeon.delete(this);
+            dungeon.deleteActor(this);
         }
     }
 
@@ -167,6 +181,9 @@ public class Actor {
         }
 
         return builder.toString().trim();
+    }
+    public Inventory getInventory(){
+        return inventory;
     }
 
     public int getAtkVal() {

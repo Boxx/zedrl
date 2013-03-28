@@ -135,6 +135,14 @@ public class PlayScreen implements Screen {
         displayMessages(messageQueue);
 
     }
+    public void clearDisplay() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                display.placeCharacter(x, y, ' ', Color.BLACK);
+            }
+        }
+        display.refresh();
+    }
 
     public void displayMessages(ArrayList<String> messageQueue) {
 

@@ -23,6 +23,7 @@ class WinScreen implements Screen
     {
         term.write("You won the game!", 1, 1);
         term.writeCenter("Press [ENTER] to play this awesome game again", 22);
+
     }
 
     @Override

@@ -151,6 +151,7 @@ public class PlayScreen implements Screen {
         
         int hp = player.getCurHP();
         infoPanel.setHPBar(hp);
+        infoPanel.updateInventory(player.getInventory());
         //String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
         //term.write(stats, 55, 2);
 
@@ -195,8 +196,13 @@ public class PlayScreen implements Screen {
         
         public void respondToUserInput(KeyEvent key) {
             switch (key.getKeyCode()) {
+                case KeyEvent.VK_G:
+                    player.pickUp();
+                    break;
+                case KeyEvent.VK_COMMA:
+                    player.pickUp();
+                    break;    
                 case KeyEvent.VK_NUMPAD4:
-                    
                     player.moveBy(-1, 0, 0);
                     break;
                 case KeyEvent.VK_LEFT:

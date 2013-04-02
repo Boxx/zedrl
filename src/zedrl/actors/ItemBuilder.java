@@ -19,8 +19,8 @@ public class ItemBuilder {
         this.dungeon = dungeon;
     }
     public Item newStone(int z){
-        Item stone = new Item(',', SColor.DOVE_FEATHER_GREY, "stone");
-        dungeon.addItem(stone, z);
+        Item stone = new Item(',', SColor.DOVE_FEATHER_GREY, "stone", true);
+        dungeon.addItemRand(stone, z);
         return stone;
     }
 }

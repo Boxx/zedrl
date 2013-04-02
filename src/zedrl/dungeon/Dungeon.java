@@ -64,7 +64,7 @@ public class Dungeon {
         actor.setPosZ(z);
         actorList.add(actor);
     }
-    public void addItem(Item item, int z){
+    public void addItemRand(Item item, int z){
         int x;
         int y;
 
@@ -75,6 +75,16 @@ public class Dungeon {
         
         items[x][y][z] = new ArrayList<>();
         items[x][y][z].add(item);
+    }
+    public void addItemAt(Item item, int x, int y, int z){
+        List<Item> itemsHere = items[x][y][z];
+        
+        if(itemsHere == null){
+            items[x][y][z] = new ArrayList<>();
+            items[x][y][z].add(item);
+        }else{
+            items[x][y][z].add(item);
+        }
     }
 
     public Actor getActor(int x, int y, int z) {

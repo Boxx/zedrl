@@ -25,9 +25,10 @@ import zedrl.dungeon.DungeonBuilder;
  *
  * @author Brandon
  */
-public class PlayScreen implements Screen {
+public class PlayScreen implements Screen, KeyListener {
 
     private Dungeon dungeon;
+    private Screen sub;
     private Actor player;
     private ArrayList<String> messageQueue;
     private int screenW;
@@ -43,8 +44,7 @@ public class PlayScreen implements Screen {
     private int height;
     private int depth;
 
-    public PlayScreen(JFrame frame, SwingPane display) {
-
+    public PlayScreen(JFrame frame) {
         messageQueue = new ArrayList<>();
         createDungeon();
         screenW = 50;
@@ -57,27 +57,33 @@ public class PlayScreen implements Screen {
         createActors(ab);
         createItems(ib);
         this.frame = frame;
-        this.display = display;
+        //this.display = display;
         depth = dungeon.getDepth();
-        frame.setLayout(new BorderLayout());
-        frame.add(display);
+        //frame.setLayout(new BorderLayout());
+        
         statusPanel = new StatusMessagePanel();
         infoPanel = new PlayerInfoPanel();
         frame.add(infoPanel, BorderLayout.EAST);
-        frame.add(statusPanel, BorderLayout.SOUTH);
-        displayOutput();
-        
-        
-        frame.setVisible(true);
+        frame.add(statusPanel, BorderLayout.SOUTH); 
         frame.pack();
-        frame.setLocationRelativeTo(null);
+        frame.revalidate();
         frame.repaint();
 
-        tileWidth = display.getCellDimension().width;
-        tileHeight = display.getCellDimension().height;
 
-        InputListener il = new InputListener();
-        frame.addKeyListener(il);
+        /*
+         * frame.setVisible(true); frame.pack();
+         * frame.setLocationRelativeTo(null); frame.repaint();
+        *
+         */
+        //tileWidth = display.getCellDimension().width;
+        //tileHeight = display.getCellDimension().height;
+
+        //InputListener il = new InputListener();
+        //frame.addKeyListener(this);
+        //displayOutput();
+        // if (sub != null) {
+        //     sub.displayOutput(display);
+        // }
     }
 
     private void createDungeon() {
@@ -97,9 +103,10 @@ public class PlayScreen implements Screen {
         }
 
     }
-    private void createItems(ItemBuilder ib){
-        for(int z = 0; z < dungeon.getDepth(); z++){
-            for (int i = 0; i < dungeon.getWidth() * dungeon.getHeight() / 20; i++){
+
+    private void createItems(ItemBuilder ib) {
+        for (int z = 0; z < dungeon.getDepth(); z++) {
+            for (int i = 0; i < dungeon.getWidth() * dungeon.getHeight() / 20; i++) {
                 ib.newStone(z);
             }
         }
@@ -116,7 +123,7 @@ public class PlayScreen implements Screen {
                     display.placeCharacter(i, j, dungeon.glyph(dx, dy, player.getPosZ()), dungeon.color(dx, dy, player.getPosZ()), SColor.BLACK);
                     //term.write(dungeon.glyph(dx, dy, player.getPosZ()), i, j, dungeon.color(dx, dy, player.getPosZ()));
                 } else {
-                    
+
                     display.placeCharacter(i, j, FOV.getTile(dx, dy, player.getPosZ()).getGlyph(), SColor.INK);
                     //term.write(FOV.getTile(dx, dy, player.getPosZ()).getGlyph(), i, j, Color.darkGray);
                 }
@@ -125,16 +132,16 @@ public class PlayScreen implements Screen {
         display.refresh();
 
     }
+    /*
+     * public void displayOutput() { if (sub != null) {
+     * sub.displayOutput(display); } int left = getScrollX(); int top =
+     * getScrollY(); displayDungeon(display, left, top); displayStats();
+     * displayMessages(messageQueue);
+     *
+     * }
+     *
+     */
 
-
-    public void displayOutput() {
-        int left = getScrollX();
-        int top = getScrollY();
-        displayDungeon(display, left, top);
-        displayStats();
-        displayMessages(messageQueue);
-
-    }
     public void clearDisplay() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -146,7 +153,7 @@ public class PlayScreen implements Screen {
 
     public void displayMessages(ArrayList<String> messageQueue) {
 
-        
+
         for (int i = 0; i < messageQueue.size(); i++) {
             String msg = messageQueue.get(i);
             statusPanel.printStatus(msg);
@@ -156,10 +163,10 @@ public class PlayScreen implements Screen {
     }
 
     public void displayStats() {
-        
+
         int hp = player.getCurHP();
         infoPanel.setHPBar(hp);
-        infoPanel.updateInventory(player.getInventory());
+        //infoPanel.updateInventory(player.getInventory());
         //String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
         //term.write(stats, 55, 2);
 
@@ -174,42 +181,37 @@ public class PlayScreen implements Screen {
     }
 
     @Override
-    public void displayOutput(SwingPane display) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+        respondToUserInput(e);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    private class InputListener implements KeyListener {
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-            
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            
-            respondToUserInput(e);
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            
-        }
-
-        
-        public void respondToUserInput(KeyEvent key) {
+        if (sub != null) {
+            sub = sub.respondToUserInput(key);
+        } else {
             switch (key.getKeyCode()) {
+                case KeyEvent.VK_D:
+                    sub = new DropItemScreen(player, frame);
+                    break;
+                case KeyEvent.VK_I:
+
+                    break;
                 case KeyEvent.VK_G:
                     player.pickUp();
                     break;
                 case KeyEvent.VK_COMMA:
                     player.pickUp();
-                    break;    
+                    break;
                 case KeyEvent.VK_NUMPAD4:
                     player.moveBy(-1, 0, 0);
                     break;
@@ -284,12 +286,28 @@ public class PlayScreen implements Screen {
                     player.moveBy(0, 0, 1);
                     break;
             }
-
-            dungeon.update();
-            displayOutput();
-            display.refresh();
-
         }
+        if(sub == null){
+            dungeon.update();
+        }
+        
+        //displayOutput();
+        //display.refresh();
+        return this;
 
+    }
+
+    @Override
+    public void displayOutput(SwingPane display) {
+
+        int left = getScrollX();
+        int top = getScrollY();
+        displayDungeon(display, left, top);
+        displayStats();
+        displayMessages(messageQueue);
+        if (sub != null) {
+            sub.displayOutput(display);
+            displayMessages(messageQueue);
+        }
     }
 }

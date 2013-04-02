@@ -49,7 +49,7 @@ public class Actor {
         this.defenseVal = defVal;
         this.curHP = totalHP;
         this.visionRad = visionRad;
-        this.inventory = new Inventory(20);
+        this.inventory = new Inventory(25);
     }
 
     public void moveBy(int mx, int my, int mz) {
@@ -118,12 +118,17 @@ public class Actor {
     public void pickUp(){
         List<Item> itemsHere = dungeon.getItems(posX, posY, posZ);
         
-        if(itemsHere.size() == 1){
+        //if(itemsHere.size() == 1){
             doAction("pick up a %s", itemsHere.get(0).getName());
             Item thisItem = itemsHere.get(0);
             dungeon.deleteItem(itemsHere, itemsHere.get(0), posX, posY, posZ);
             inventory.add(thisItem);
-        }
+        //}
+    }
+    public void drop(Item item) {
+        doAction("drop a " + item.getName());
+        inventory.remove(item);
+        dungeon.addItemAt(item, posX, posY, posZ);
     }
 
     public void update() {
@@ -249,5 +254,7 @@ public class Actor {
     public Tile lookAt(int x, int y, int z) {
         return dungeon.tile(x, y, z);
     }
+
+    
 
 }

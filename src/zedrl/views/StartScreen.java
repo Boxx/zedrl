@@ -18,28 +18,29 @@ import squidpony.squidgrid.gui.swing.SwingPane;
 public class StartScreen implements Screen, KeyListener
 {
     private JFrame frame;
-    private SwingPane display;
     
-    public StartScreen(){
-        frame = new JFrame("Welcome to ZedRL!");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        display = new SwingPane();
-        display.initialize(50, 24, new Font("Arial Black",Font.PLAIN, 18));
-        frame.add(display);
+    public StartScreen(JFrame frame){
+        this.frame = frame;
+        //frame = new JFrame("Welcome to ZedRL!");
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //display = new SwingPane();
+        //display.initialize(50, 24, new Font("Arial Black",Font.PLAIN, 18));
+        //frame.add(display);
         //display.placeHorizontalString(0, 0, "Welcome", Color.red, Color.darkGray);
-        display.refresh();
+        //display.refresh();
         
-        frame.setVisible(true);
-        frame.pack();
-        frame.repaint();
-        frame.setLocationRelativeTo(null);
-        frame.addKeyListener(this);
+        //frame.setVisible(true);
+        //frame.pack();
+        //frame.repaint();
+       //frame.setLocationRelativeTo(null);
+        //frame.addKeyListener(this);
     }
     @Override
     public void displayOutput(SwingPane display)
     {
-        System.out.println("Attempting to display the start screen");
-        display.placeHorizontalString(80/2, 24/2, "Press [Enter] To Continue!");
+        display.placeHorizontalString(5, 5, "Press [Enter] To Continue!", Color.WHITE, Color.BLACK);
+        display.refresh();
+
     }
 
     @Override
@@ -47,7 +48,7 @@ public class StartScreen implements Screen, KeyListener
     {
         if (key.getKeyCode() == KeyEvent.VK_ENTER)
         {
-            return new PlayScreen(frame, display);
+            return new PlayScreen(frame);
         } else
         {
             return this;

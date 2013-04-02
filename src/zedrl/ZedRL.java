@@ -5,6 +5,8 @@
 package zedrl;
 
 import asciiPanel.AsciiPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -18,23 +20,41 @@ import zedrl.views.PlayScreen;
  *
  * @author Brandon
  */
-public class ZedRL implements KeyListener
+public class ZedRL extends JFrame implements KeyListener
 {
 
 
-    public Screen screen;
+    private Screen screen;
+    private SwingPane display;
     /**
      * @param args the command line arguments
      */
     public ZedRL()
     {
-        screen = new StartScreen();
+        super();
+        display = new SwingPane(50,24, new Font("Arial Black", Font.PLAIN, 16));
+        setLayout(new BorderLayout());
+        add(display);
+        pack();
+        screen = new StartScreen(this);
+        addKeyListener(this);
+        repaint();
         
     }
 
     public void repaint() {
-        
+        //clearDisplay();
+        screen.displayOutput(display);
+        super.repaint();
 
+    }
+    public void clearDisplay() {
+        for (int x = 0; x < display.getCellWidth(); x++) {
+            for (int y = 0; y < display.getCellHeight(); y++) {
+                display.placeCharacter(x, y, ' ', Color.BLACK);
+            }
+        }
+        display.refresh();
     }
 
     @Override
@@ -46,7 +66,8 @@ public class ZedRL implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-
+        screen = screen.respondToUserInput(e);
+        repaint();
     }
 
     @Override
@@ -60,7 +81,10 @@ public class ZedRL implements KeyListener
     {
         // TODO code application logic here
         ZedRL app = new ZedRL();
-        
+        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        app.setBackground(Color.BLACK);
+        app.setVisible(true);
+        app.setLocationRelativeTo(null);
 
     }
 }

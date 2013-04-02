@@ -97,6 +97,9 @@ public class Dungeon {
                 break;
             }
         }
+        if(items.isEmpty()){
+            this.items[x][y][z] = null;
+        }
     }
 
     public void update() {

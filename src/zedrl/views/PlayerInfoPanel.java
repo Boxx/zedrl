@@ -4,6 +4,10 @@
  */
 package zedrl.views;
 
+import javax.swing.JList;
+import zedrl.actors.Inventory;
+import zedrl.actors.Item;
+
 /**
  *
  * @author Boxx
@@ -15,10 +19,20 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
      */
     public PlayerInfoPanel() {
         initComponents();
+        jList1.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        jList1.setVisibleRowCount(-1);
     }
     public void setHPBar(int playerHP){
         hpBar.setValue(playerHP);
         
+    }
+    public void updateInventory(Inventory inventory){
+        
+        Item[] myItems = inventory.getItems();
+        for(int i = 0; i < myItems.length; i++){
+            System.out.println(myItems[i]);
+        }
+        jList1 = new JList(myItems);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,6 +45,8 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
 
         hpBar = new javax.swing.JProgressBar();
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
 
         setBackground(new java.awt.Color(0, 0, 0));
 
@@ -40,6 +56,11 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Health");
 
+        jList1.setBackground(new java.awt.Color(0, 0, 0));
+        jList1.setForeground(new java.awt.Color(255, 255, 255));
+        jList1.setFocusable(false);
+        jScrollPane1.setViewportView(jList1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -48,25 +69,33 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(hpBar, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(39, 39, 39)
+                        .addComponent(hpBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 29, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(98, 98, 98)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(7, 7, 7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(hpBar, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(294, Short.MAX_VALUE))
+                .addGap(153, 153, 153)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar hpBar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JList jList1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

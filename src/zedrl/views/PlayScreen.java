@@ -106,8 +106,14 @@ public class PlayScreen implements Screen, KeyListener {
 
     private void createItems(ItemBuilder ib) {
         for (int z = 0; z < dungeon.getDepth(); z++) {
-            for (int i = 0; i < dungeon.getWidth() * dungeon.getHeight() / 20; i++) {
+            for (int i = 0; i < 5; i++) {
                 ib.newStone(z);
+            }
+        }
+        for (int z = 0; z < dungeon.getDepth(); z++) {
+            for(int i = 0; i < 5; i++){
+                ib.pickRandArmor(z);
+                ib.pickRandWeapon(z);
             }
         }
     }
@@ -203,6 +209,8 @@ public class PlayScreen implements Screen, KeyListener {
                 case KeyEvent.VK_D:
                     sub = new DropItemScreen(player, frame);
                     break;
+                case KeyEvent.VK_W:
+                    sub = new EquipItemScreen(player,frame);
                 case KeyEvent.VK_I:
 
                     break;

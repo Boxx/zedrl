@@ -17,16 +17,46 @@ public class Item {
     private String name;
     private boolean isStackable;
     private int stacks;
+    private int atkVal;
+    private int defVal;
+    private String type;
+    private boolean isWearable;
+    private boolean isEquipped;
 
-    public Item(char glyph, SColor color, String name, boolean isStackable) {
+    public Item(char glyph, SColor color, String name, String type, boolean isStackable) {
         this.glyph = glyph;
         this.color = color;
         this.name = name;
+        this.type = type;
         this.isStackable = isStackable;
         this.stacks = 1;
         
     }
 
+    public int getAtkVal() {
+        return atkVal;
+    }
+
+    public void setAtkVal(int atkVal) {
+        this.atkVal = atkVal;
+    }
+
+    public int getDefVal() {
+        return defVal;
+    }
+
+    public void setDefVal(int defVal) {
+        this.defVal = defVal;
+    }
+
+    public boolean isWearable() {
+        return isWearable;
+    }
+
+    public void setIsWearable(boolean isWearable) {
+        this.isWearable = isWearable;
+    }
+    
     
     
     public SColor getColor() {
@@ -37,6 +67,14 @@ public class Item {
         return glyph;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    
     public String getName() {
         return name;
     }
@@ -59,6 +97,14 @@ public class Item {
     @Override
     public String toString() {
         return "Item{" + "name=" + name + '}';
+    }
+
+    public boolean isEquipped() {
+        return isEquipped;
+    }
+
+    public void setIsEquipped(boolean isEquipped) {
+        this.isEquipped = isEquipped;
     }
     
     

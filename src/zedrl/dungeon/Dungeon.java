@@ -71,7 +71,7 @@ public class Dungeon {
         do {
             x = (int) (Math.random() * width);
             y = (int) (Math.random() * height);
-        } while (!tile(x, y, z).isPassable() || getItems(x, y, z) != null);
+        } while (!tile(x, y, z).isPassable() || tile(x,y,z).isStair() || getItems(x, y, z) != null);
         
         items[x][y][z] = new ArrayList<>();
         items[x][y][z].add(item);

@@ -110,6 +110,9 @@ public abstract class ItemBasedScreen implements Screen, KeyListener {
                 lines.add(line);
             }else{
                 String line = letters.charAt(i) + "  -  " + item.getName();
+                if(item.isEquipped()){
+                    line += " (equipped)";
+                }
                 lines.add(line);
             }
             

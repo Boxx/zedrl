@@ -32,6 +32,17 @@ public class Actor {
     public int curHP;
     public int attackVal;
     public int defenseVal;
+    
+    private Item weapon;
+    private Item shield;
+    private Item chestArmor;
+    private Item cloak;
+    private Item helm;
+    private Item leftRing;
+    private Item rightRing;
+    private Item amulet;
+    
+    
 
     public Actor(Dungeon dungeon, char glyph, SColor color) {
         this.dungeon = dungeon;
@@ -60,11 +71,8 @@ public class Actor {
         Tile thisTile = dungeon.tile(posX, posY, posZ);
         if (mz == -1) {
             if (thisTile.isUpStair()) {
-                System.out.println("actor: " + posX + posY + posZ);
-                System.out.println("tile: " + thisTile.toString());
                 Location target = thisTile.getConnection();
                 targetTile = dungeon.tile(target.getX(), target.getY(), target.getZ());
-                System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk up the stairs to level %d", posZ + mz + 1);
                 AI.enterTile(target.getX(), target.getY(), target.getZ(), targetTile);
             } else {
@@ -73,12 +81,8 @@ public class Actor {
             }
         } else if (mz == 1) {
             if (thisTile.isDownStair()) {
-                System.out.println("actor: " + posX + posY + posZ);
-                System.out.println("tile: " + thisTile.toString());
-                System.out.println(thisTile.getConnection());
                 Location target = thisTile.getConnection();
                 targetTile = dungeon.tile(target.getX(), target.getY(), target.getZ());
-                System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk down the stairs to level %d", posZ + mz + 1);
                 AI.enterTile(target.getX(), target.getY(), target.getZ(), targetTile);
             } else {
@@ -90,6 +94,9 @@ public class Actor {
 
         if (mz == 0 && occupant == null) {
             targetTile = dungeon.tile(posX + mx, posY + my, posZ + mz);
+            if (dungeon.getItems(posX + mx, posY + my, posZ + mz) != null && name.equals("Zedman")){
+                doAction("see a " + dungeon.getItems(posX + mx, posY + my, posZ + mz).get(0).getName() + " here");
+            }
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
         } else if (mz == 0 && occupant != null) {
             attack(occupant);
@@ -129,6 +136,42 @@ public class Actor {
         doAction("drop a " + item.getName());
         inventory.remove(item);
         dungeon.addItemAt(item, posX, posY, posZ);
+        unequip(item);
+    }
+    public void unequip(Item item){
+        if(item == null){
+            return;
+        }
+        
+        if(item == weapon){
+            doAction("unequip a " + item.getName());
+            weapon = null;
+        }
+        else if(item == chestArmor){
+            doAction("take off a " + item.getName());
+            chestArmor = null;
+        }
+        item.setIsEquipped(false);
+        // @TODO
+        // Add the rest of the item unequip stuff
+    }
+    public void equip(Item item){
+        if(item.getAtkVal() == 0 && item.getDefVal() == 0){
+            return;
+        }
+        if(item.getType().equals("weapon")){
+            unequip(weapon);
+            doAction("wield a " + item.getName());
+            weapon = item;
+        }
+        else if(item.getType().equals("chestArmor")){
+            unequip(chestArmor);
+            doAction("put on a " + item.getName());
+            chestArmor = item;
+        }
+        item.setIsEquipped(true);
+        // @TODO
+        // Add the rest of item equip stuff
     }
 
     public void update() {
@@ -192,7 +235,10 @@ public class Actor {
     }
 
     public int getAtkVal() {
-        return attackVal;
+        return attackVal + (weapon == null ? 0 : weapon.getAtkVal())
+        + (chestArmor == null ? 0 : chestArmor.getAtkVal());
+        // @TODO
+        // Factor in other item attack values and properties
     }
 
     public int getCurHP() {
@@ -200,7 +246,10 @@ public class Actor {
     }
 
     public int getDefVal() {
-        return defenseVal;
+        return defenseVal + (weapon == null ? 0 : weapon.getDefVal())
+        + (chestArmor == null ? 0 : chestArmor.getDefVal());
+        // @TODO
+        // Factor in other item attack values and properties
     }
 
     public int getTotalHP() {

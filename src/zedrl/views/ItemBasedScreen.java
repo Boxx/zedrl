@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import squidpony.squidcolor.SColor;
 import squidpony.squidgrid.gui.swing.SwingPane;
 import zedrl.actors.Actor;
@@ -24,6 +26,8 @@ public abstract class ItemBasedScreen implements Screen, KeyListener {
     private String letters;
     private JFrame frame;
     private SwingPane display;
+    private JPanel panel;
+    private JTextPane text;
 
     public ItemBasedScreen(Actor player,JFrame frame) {
         this.player = player;
@@ -37,6 +41,7 @@ public abstract class ItemBasedScreen implements Screen, KeyListener {
     @Override
     public void displayOutput(SwingPane display) {
         
+       
         
         ArrayList<String> lines = getList();
         int y = 4;
@@ -110,6 +115,9 @@ public abstract class ItemBasedScreen implements Screen, KeyListener {
                 lines.add(line);
             }else{
                 String line = letters.charAt(i) + "  -  " + item.getName();
+                if(item.isEquipped()){
+                    line += " (equipped)";
+                }
                 lines.add(line);
             }
             

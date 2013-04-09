@@ -100,14 +100,26 @@ public class PlayScreen implements Screen, KeyListener {
             for (int i = 0; i < 10; i++) {
                 ab.newBat(z);
             }
+            if(z > 0){
+                for (int i = 0; i < 5; i++){
+                    ab.newGoblin(z, player);
+                }
+            }
+            
         }
 
     }
 
     private void createItems(ItemBuilder ib) {
         for (int z = 0; z < dungeon.getDepth(); z++) {
-            for (int i = 0; i < dungeon.getWidth() * dungeon.getHeight() / 20; i++) {
-                ib.newStone(z);
+            for (int i = 0; i < 5; i++) {
+                ib.placeNewStone(z);
+            }
+        }
+        for (int z = 0; z < dungeon.getDepth(); z++) {
+            for(int i = 0; i < 5; i++){
+                ib.pickRandArmor(z);
+                ib.pickRandWeapon(z);
             }
         }
     }
@@ -165,7 +177,9 @@ public class PlayScreen implements Screen, KeyListener {
     public void displayStats() {
 
         int hp = player.getCurHP();
-        infoPanel.setHPBar(hp);
+        int totalhp = player.getTotalHP();
+        infoPanel.setHPBar(hp,totalhp);
+        infoPanel.updateInventory(player);
         //infoPanel.updateInventory(player.getInventory());
         //String stats = String.format(" %3d/%3d hp", player.getCurHP(), player.getTotalHP());
         //term.write(stats, 55, 2);
@@ -201,8 +215,11 @@ public class PlayScreen implements Screen, KeyListener {
         } else {
             switch (key.getKeyCode()) {
                 case KeyEvent.VK_D:
-                    sub = new DropItemScreen(player, frame);
+                    //sub = new DropItemScreen(player, frame);
+                    sub = new SwingDropScreen(player,frame);
                     break;
+                case KeyEvent.VK_W:
+                    sub = new SwingEquipScreen(player,frame);
                 case KeyEvent.VK_I:
 
                     break;
@@ -299,6 +316,7 @@ public class PlayScreen implements Screen, KeyListener {
 
     @Override
     public void displayOutput(SwingPane display) {
+        
 
         int left = getScrollX();
         int top = getScrollY();
@@ -308,6 +326,8 @@ public class PlayScreen implements Screen, KeyListener {
         if (sub != null) {
             sub.displayOutput(display);
             displayMessages(messageQueue);
+        }else{
+            display.setVisible(true);
         }
     }
 }

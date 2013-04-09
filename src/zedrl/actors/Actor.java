@@ -11,6 +11,7 @@ import squidpony.squidcolor.SColor;
 import zedrl.dungeon.Dungeon;
 import zedrl.dungeon.Location;
 import zedrl.dungeon.Tile;
+import zedrl.utilities.Roller;
 
 /**
  *
@@ -19,6 +20,7 @@ import zedrl.dungeon.Tile;
 public class Actor {
 
     private Dungeon dungeon;
+    private static ItemBuilder ib;
     private ActorAI AI;
     private int posX;
     private int posY;
@@ -27,11 +29,39 @@ public class Actor {
     private SColor color;
     private Inventory inventory;
     private int visionRad;
-    public String name;
     public int totalHP;
+    
+    public String name;
+
     public int curHP;
     public int attackVal;
     public int defenseVal;
+    
+    private int level;
+    private int xp;
+    public int str;
+    public int strmod = str > 10 ? (str - 10)/2 : 0;
+    public int dex;
+    public int dexmod = dex > 10 ? (str - 10)/2 : 0;
+    public int intel;
+    public int intmod = intel > 10 ? (str - 10)/2 : 0;
+    public int wis;
+    public int wismod = wis > 10 ? (str - 10)/2 : 0;
+    public int con;
+    public int conmod = con > 10 ? (str - 10)/2 : 0;
+    public int cha;
+    public int chamod = cha > 10 ? (str - 10)/2 : 0;
+    
+    private Item weapon;
+    private Item shield;
+    private Item chestArmor;
+    private Item cloak;
+    private Item helm;
+    private Item leftRing;
+    private Item rightRing;
+    private Item amulet;
+    
+    
 
     public Actor(Dungeon dungeon, char glyph, SColor color) {
         this.dungeon = dungeon;
@@ -50,6 +80,16 @@ public class Actor {
         this.curHP = totalHP;
         this.visionRad = visionRad;
         this.inventory = new Inventory(25);
+        this.ib = new ItemBuilder(dungeon);
+        
+    }
+    public void setModifiers(){
+        strmod = str > 10 ? (str - 10)/2 : 0;
+        dexmod = dex > 10 ? (str - 10)/2 : 0;
+        intmod = intel > 10 ? (str - 10)/2 : 0;
+        wismod = wis > 10 ? (str - 10)/2 : 0;
+        conmod = con > 10 ? (str - 10)/2 : 0;
+        chamod = cha > 10 ? (str - 10)/2 : 0;
     }
 
     public void moveBy(int mx, int my, int mz) {
@@ -60,11 +100,8 @@ public class Actor {
         Tile thisTile = dungeon.tile(posX, posY, posZ);
         if (mz == -1) {
             if (thisTile.isUpStair()) {
-                System.out.println("actor: " + posX + posY + posZ);
-                System.out.println("tile: " + thisTile.toString());
                 Location target = thisTile.getConnection();
                 targetTile = dungeon.tile(target.getX(), target.getY(), target.getZ());
-                System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk up the stairs to level %d", posZ + mz + 1);
                 AI.enterTile(target.getX(), target.getY(), target.getZ(), targetTile);
             } else {
@@ -73,12 +110,8 @@ public class Actor {
             }
         } else if (mz == 1) {
             if (thisTile.isDownStair()) {
-                System.out.println("actor: " + posX + posY + posZ);
-                System.out.println("tile: " + thisTile.toString());
-                System.out.println(thisTile.getConnection());
                 Location target = thisTile.getConnection();
                 targetTile = dungeon.tile(target.getX(), target.getY(), target.getZ());
-                System.out.println("target: " + target.getX() + "," + target.getY() + "," + target.getZ());
                 doAction("walk down the stairs to level %d", posZ + mz + 1);
                 AI.enterTile(target.getX(), target.getY(), target.getZ(), targetTile);
             } else {
@@ -87,9 +120,14 @@ public class Actor {
             }
         }
         Actor occupant = dungeon.getActor(posX + mx, posY + my, posZ + mz);
-
+        
+        if (this.name.equals("Zedman") && dungeon.getItems(posX + mx, posY + my, posZ + mz) != null){
+                doAction("see a " + dungeon.getItems(posX + mx, posY + my, posZ + mz).get(0).getName() + " here");
+            }
         if (mz == 0 && occupant == null) {
             targetTile = dungeon.tile(posX + mx, posY + my, posZ + mz);
+            
+            
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
         } else if (mz == 0 && occupant != null) {
             attack(occupant);
@@ -101,6 +139,22 @@ public class Actor {
     }
 
     public void attack(Actor occupant) {
+        /**
+         * Hit Calculation
+         */
+        int d20roll = Roller.randomInt(20);
+        if (d20roll + strmod > occupant.defenseVal){
+            int dmg = Roller.randomInt(1, getAtkVal()) + strmod;
+            occupant.setHP(-dmg);
+            doAction("hit the %s for %d damage", occupant.name, dmg);
+            if (occupant.getCurHP() <= 0) {
+                doAction("killed the %s", occupant.name);
+                gainXP(occupant);
+            }
+        }else{
+            doAction("miss the %s", occupant.name);
+        }
+        /*
         if (occupant.getGlyph() != this.getGlyph()) {
             int dmg = Math.max(0, getAtkVal() - occupant.getDefVal());
             dmg = (int) (Math.random() * dmg) + 1;
@@ -112,6 +166,8 @@ public class Actor {
             }
             //occupant.doAction("hit you!  It strikes for %d damage.",dmg);
         }
+        *
+        */
 
 
     }
@@ -129,6 +185,42 @@ public class Actor {
         doAction("drop a " + item.getName());
         inventory.remove(item);
         dungeon.addItemAt(item, posX, posY, posZ);
+        unequip(item);
+    }
+    public void unequip(Item item){
+        if(item == null){
+            return;
+        }
+        
+        if(item == weapon){
+            doAction("unequip a " + item.getName());
+            weapon = null;
+        }
+        else if(item == chestArmor){
+            doAction("take off a " + item.getName());
+            chestArmor = null;
+        }
+        item.setIsEquipped(false);
+        // @TODO
+        // Add the rest of the item unequip stuff
+    }
+    public void equip(Item item){
+        if(item.getAtkVal() == 0 && item.getDefVal() == 0){
+            return;
+        }
+        if(item.getType().equals("weapon")){
+            unequip(weapon);
+            doAction("wield a " + item.getName());
+            weapon = item;
+        }
+        else if(item.getType().equals("chestArmor")){
+            unequip(chestArmor);
+            doAction("put on a " + item.getName());
+            chestArmor = item;
+        }
+        item.setIsEquipped(true);
+        // @TODO
+        // Add the rest of item equip stuff
     }
 
     public void update() {
@@ -192,7 +284,10 @@ public class Actor {
     }
 
     public int getAtkVal() {
-        return attackVal;
+        return attackVal + (weapon == null ? 0 : weapon.getAtkVal())
+        + (chestArmor == null ? 0 : chestArmor.getAtkVal());
+        // @TODO
+        // Factor in other item attack values and properties
     }
 
     public int getCurHP() {
@@ -200,7 +295,10 @@ public class Actor {
     }
 
     public int getDefVal() {
-        return defenseVal;
+        return defenseVal + (weapon == null ? 0 : weapon.getDefVal())
+        + (chestArmor == null ? 0 : chestArmor.getDefVal());
+        // @TODO
+        // Factor in other item attack values and properties
     }
 
     public int getTotalHP() {
@@ -255,6 +353,183 @@ public class Actor {
         return dungeon.tile(x, y, z);
     }
 
+    public Item getAmulet() {
+        return amulet;
+    }
+
+    public Item getChestArmor() {
+        return chestArmor;
+    }
+
+    public Item getCloak() {
+        return cloak;
+    }
+
+    public Item getHelm() {
+        return helm;
+    }
+
+    public Item getLeftRing() {
+        return leftRing;
+    }
+
+    public Item getRightRing() {
+        return rightRing;
+    }
+
+    public Item getShield() {
+        return shield;
+    }
+
+    public Item getWeapon() {
+        return weapon;
+    }
+
+    public void setAmulet(Item amulet) {
+        this.amulet = amulet;
+    }
+
+    public void setCha(int cha) {
+        this.cha = cha;
+    }
+
+    public void setChestArmor(Item chestArmor) {
+        this.chestArmor = chestArmor;
+    }
+
+    public void setCloak(Item cloak) {
+        this.cloak = cloak;
+    }
+
+    public void setCon(int con) {
+        this.con = con;
+    }
+
+    public void setDex(int dex) {
+        this.dex = dex;
+    }
+
+    public void setHelm(Item helm) {
+        this.helm = helm;
+    }
+
+    public void setIntel(int intel) {
+        this.intel = intel;
+    }
+
+    public void setLeftRing(Item leftRing) {
+        this.leftRing = leftRing;
+    }
+
+    public void setRightRing(Item rightRing) {
+        this.rightRing = rightRing;
+    }
+
+    public void setShield(Item shield) {
+        this.shield = shield;
+    }
+
+    public void setStr(int str) {
+        this.str = str;
+    }
+
+    public void setWeapon(Item weapon) {
+        this.weapon = weapon;
+    }
+
+    public void setWis(int wis) {
+        this.wis = wis;
+    }
+
+    public int getChamod() {
+        return chamod;
+    }
+
+    public void setChamod(int chamod) {
+        this.chamod = chamod;
+    }
+
+    public int getConmod() {
+        return conmod;
+    }
+
+    public void setConmod(int conmod) {
+        this.conmod = conmod;
+    }
+
+    public int getDexmod() {
+        return dexmod;
+    }
+
+    public void setDexmod(int dexmod) {
+        this.dexmod = dexmod;
+    }
+
+    public int getIntmod() {
+        return intmod;
+    }
+
+    public void setIntmod(int intmod) {
+        this.intmod = intmod;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getStrmod() {
+        return strmod;
+    }
+
+    public void setStrmod(int strmod) {
+        this.strmod = strmod;
+    }
+
+    public int getWismod() {
+        return wismod;
+    }
+
+    public void setWismod(int wismod) {
+        this.wismod = wismod;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+    public void modXP(int x){
+        
+        xp += x;
+        
+        sendMessage("You %s %d xp", x < 0 ? "lose":"gain", x);
+        
+        while(xp < (int)(Math.pow(level, 1.5) * 20)){
+            level++;
+            doAction("advance to level %d", level);
+            AI.onLevelUp();
+            setTotalHP(level * 2);
+        }
+    }
+
+    public void setTotalHP(int totalHP) {
+        this.totalHP = totalHP;
+    }
+
+    private void gainXP(Actor occupant) {
+        int xp = occupant.getTotalHP() + occupant.getAtkVal() + occupant.getDefVal() - level * 2;
+        
+        if(xp > 0){
+            modXP(xp);
+        }
+    }
+    
     
 
 }

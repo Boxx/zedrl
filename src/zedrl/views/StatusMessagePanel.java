@@ -43,7 +43,6 @@ public class StatusMessagePanel extends javax.swing.JPanel {
         StatusArea.setForeground(new java.awt.Color(255, 255, 255));
         StatusArea.setRows(5);
         StatusArea.setFocusable(false);
-        StatusArea.setRequestFocusEnabled(false);
         jScrollPane1.setViewportView(StatusArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

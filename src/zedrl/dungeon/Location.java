@@ -70,7 +70,9 @@ public class Location {
                 if(dx == 0 && dy == 0){
                     continue;
                 }
-                localPoints.add(new Location(x+dx, y+dy, z));
+                int nx = x+dx;
+                int ny = y+dy;
+                localPoints.add(new Location(nx, ny, z));
             }
         }
         Collections.shuffle(localPoints);

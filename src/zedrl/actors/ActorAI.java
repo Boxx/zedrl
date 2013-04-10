@@ -68,8 +68,8 @@ public class ActorAI {
         return true;
     }
 
-    void onLevelUp() {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public void onLevelUp() {
+        new LevelUpController().autoLevel(actor);
     }
 
 }

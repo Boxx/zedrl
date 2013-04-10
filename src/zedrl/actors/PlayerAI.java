@@ -44,4 +44,5 @@ public class PlayerAI extends ActorAI {
         return FOV.isVisable(vx, vy, vz);
     }
     
+    
 }

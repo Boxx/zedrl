@@ -32,5 +32,9 @@ public class LevelUpController {
             }
         }
         
+    };
+    void autoLevel(Actor actor){
+        options[(int)(Math.random() * options.length)].invoke(actor);
     }
+
 }

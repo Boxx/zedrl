@@ -85,11 +85,11 @@ public class Actor {
     }
     public void setModifiers(){
         strmod = str > 10 ? (str - 10)/2 : 0;
-        dexmod = dex > 10 ? (str - 10)/2 : 0;
-        intmod = intel > 10 ? (str - 10)/2 : 0;
-        wismod = wis > 10 ? (str - 10)/2 : 0;
-        conmod = con > 10 ? (str - 10)/2 : 0;
-        chamod = cha > 10 ? (str - 10)/2 : 0;
+        dexmod = dex > 10 ? (dex - 10)/2 : 0;
+        intmod = intel > 10 ? (intel - 10)/2 : 0;
+        wismod = wis > 10 ? (wis - 10)/2 : 0;
+        conmod = con > 10 ? (con - 10)/2 : 0;
+        chamod = cha > 10 ? (cha - 10)/2 : 0;
     }
 
     public void moveBy(int mx, int my, int mz) {
@@ -130,7 +130,11 @@ public class Actor {
             
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
         } else if (mz == 0 && occupant != null) {
-            attack(occupant);
+            if(name.equals("Zedman") || occupant.name.equals("Zedman")){
+                System.out.println("attacking");
+                attack(occupant);
+            }
+            
         }
 
     }
@@ -510,11 +514,12 @@ public class Actor {
         
         sendMessage("You %s %d xp", x < 0 ? "lose":"gain", x);
         
-        while(xp < (int)(Math.pow(level, 1.5) * 20)){
+        while(xp > (int)(Math.pow(level, 1.5) * 20)){
             level++;
             doAction("advance to level %d", level);
             AI.onLevelUp();
-            setTotalHP(level * 2);
+            gainHP(level * 2);
+            curHP = totalHP;
         }
     }
 
@@ -528,6 +533,29 @@ public class Actor {
         if(xp > 0){
             modXP(xp);
         }
+    }
+    public void gainHP(int x){
+        totalHP += x;
+    }
+
+    void gainSTR() {
+        str += 1;
+        doAction("look a little stronger");
+    }
+
+    void gainDEX() {
+        dex += 1;
+        doAction("look a little more agile");
+    }
+
+    void gainINT() {
+        intel += 1;
+        doAction("look a little wiser");
+    }
+
+    void gainCON() {
+        con += 1;
+        doAction("look a little healthier");
     }
     
     

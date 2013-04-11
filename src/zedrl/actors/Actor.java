@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import squidpony.squidcolor.SColor;
 import zedrl.dungeon.Dungeon;
+import zedrl.dungeon.Line;
 import zedrl.dungeon.Location;
 import zedrl.dungeon.Tile;
 import zedrl.utilities.Roller;
@@ -30,28 +31,24 @@ public class Actor {
     private Inventory inventory;
     private int visionRad;
     public int totalHP;
-    
     public String name;
-
     public int curHP;
     public int attackVal;
     public int defenseVal;
-    
     private int level;
     private int xp;
     public int str;
-    public int strmod = str > 10 ? (str - 10)/2 : 0;
+    public int strmod = str > 10 ? (str - 10) / 2 : 0;
     public int dex;
-    public int dexmod = dex > 10 ? (str - 10)/2 : 0;
+    public int dexmod = dex > 10 ? (str - 10) / 2 : 0;
     public int intel;
-    public int intmod = intel > 10 ? (str - 10)/2 : 0;
+    public int intmod = intel > 10 ? (str - 10) / 2 : 0;
     public int wis;
-    public int wismod = wis > 10 ? (str - 10)/2 : 0;
+    public int wismod = wis > 10 ? (str - 10) / 2 : 0;
     public int con;
-    public int conmod = con > 10 ? (str - 10)/2 : 0;
+    public int conmod = con > 10 ? (str - 10) / 2 : 0;
     public int cha;
-    public int chamod = cha > 10 ? (str - 10)/2 : 0;
-    
+    public int chamod = cha > 10 ? (str - 10) / 2 : 0;
     private Item weapon;
     private Item shield;
     private Item chestArmor;
@@ -60,8 +57,7 @@ public class Actor {
     private Item leftRing;
     private Item rightRing;
     private Item amulet;
-    
-    
+    private String details;
 
     public Actor(Dungeon dungeon, char glyph, SColor color) {
         this.dungeon = dungeon;
@@ -81,19 +77,22 @@ public class Actor {
         this.visionRad = visionRad;
         this.inventory = new Inventory(25);
         this.ib = new ItemBuilder(dungeon);
-        
+
     }
-    public void setModifiers(){
-        strmod = str > 10 ? (str - 10)/2 : 0;
-        dexmod = dex > 10 ? (dex - 10)/2 : 0;
-        intmod = intel > 10 ? (intel - 10)/2 : 0;
-        wismod = wis > 10 ? (wis - 10)/2 : 0;
-        conmod = con > 10 ? (con - 10)/2 : 0;
-        chamod = cha > 10 ? (cha - 10)/2 : 0;
+
+    public void setModifiers() {
+        strmod = str > 10 ? (str - 10) / 2 : 0;
+        dexmod = dex > 10 ? (dex - 10) / 2 : 0;
+        intmod = intel > 10 ? (intel - 10) / 2 : 0;
+        wismod = wis > 10 ? (wis - 10) / 2 : 0;
+        conmod = con > 10 ? (con - 10) / 2 : 0;
+        chamod = cha > 10 ? (cha - 10) / 2 : 0;
+        totalHP = totalHP + conmod;
+
     }
 
     public void moveBy(int mx, int my, int mz) {
-        if(mx == 0 && my == 0 && mz == 0){
+        if (mx == 0 && my == 0 && mz == 0) {
             return;
         }
         Tile targetTile;
@@ -120,26 +119,40 @@ public class Actor {
             }
         }
         Actor occupant = dungeon.getActor(posX + mx, posY + my, posZ + mz);
-        
-        if (this.name.equals("Zedman") && dungeon.getItems(posX + mx, posY + my, posZ + mz) != null){
-                doAction("see a " + dungeon.getItems(posX + mx, posY + my, posZ + mz).get(0).getName() + " here");
-            }
+
+        if (this.name.equals("Zedman") && dungeon.getItems(posX + mx, posY + my, posZ + mz) != null) {
+            doAction("see a " + dungeon.getItems(posX + mx, posY + my, posZ + mz).get(0).getName() + " here");
+        }
         if (mz == 0 && occupant == null) {
             targetTile = dungeon.tile(posX + mx, posY + my, posZ + mz);
-            
-            
+
+
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
         } else if (mz == 0 && occupant != null) {
-            if(name.equals("Zedman") || occupant.name.equals("Zedman")){
+            if (name.equals("Zedman") || occupant.name.equals("Zedman")) {
                 System.out.println("attacking");
                 attack(occupant);
             }
-            
+
         }
 
     }
-    public Actor findActor(int x, int y, int z){
-        return dungeon.getActor(x, y, z);
+
+    public Actor findActor(int x, int y, int z) {
+        if (hasSightOf(x, y, z)) {
+            return dungeon.getActor(x, y, z);
+        } else {
+            return null;
+        }
+
+    }
+
+    public Item findItem(int x, int y, int z) {
+        if (hasSightOf(x, y, z) && dungeon.getItems(x, y, z) != null) {
+            return dungeon.getItems(x, y, z).get(0);
+        } else {
+            return null;
+        }
     }
 
     public void attack(Actor occupant) {
@@ -147,7 +160,7 @@ public class Actor {
          * Hit Calculation
          */
         int d20roll = Roller.randomInt(20);
-        if (d20roll + strmod > occupant.defenseVal){
+        if (d20roll + strmod > occupant.defenseVal) {
             int dmg = Roller.randomInt(1, getAtkVal()) + strmod;
             occupant.setHP(-dmg);
             doAction("hit the %s for %d damage", occupant.name, dmg);
@@ -155,52 +168,89 @@ public class Actor {
                 doAction("killed the %s", occupant.name);
                 gainXP(occupant);
             }
-        }else{
+        } else {
             doAction("miss the %s", occupant.name);
         }
-        /*
-        if (occupant.getGlyph() != this.getGlyph()) {
-            int dmg = Math.max(0, getAtkVal() - occupant.getDefVal());
-            dmg = (int) (Math.random() * dmg) + 1;
-            occupant.setHP(-dmg);
-
-            doAction("hit the %s for %d damage", occupant.name, dmg);
-            if (occupant.getCurHP() <= 0) {
-                doAction("killed the %s", occupant.name);
-            }
-            //occupant.doAction("hit you!  It strikes for %d damage.",dmg);
-        }
-        *
-        */
-
-
     }
-    public void pickUp(){
-        List<Item> itemsHere = dungeon.getItems(posX, posY, posZ);
+    public void thrownAttack(Item item, Actor target){
+        int d20roll = Roller.randomInt(20);
+        if (d20roll + dexmod > target.defenseVal) {
+            int dmg = Roller.randomInt(1, item.getThrowAtkVal()) + strmod;
+            target.setHP(-dmg);
+            doAction("throw a %s and hit the %s for %d damage", item.getName(), target.name, dmg);
+            if (target.getCurHP() <= 0) {
+                doAction("killed the %s", target.name);
+                gainXP(target);
+            }
+        } else {
+            doAction("miss the %s", target.name);
+        }
+    }
+    public void rangedAttack(Actor target){
+        int d20roll = Roller.randomInt(20);
+        if (d20roll + dexmod > target.defenseVal) {
+            int dmg = Roller.randomInt(1, getAtkVal()) + strmod;
+            target.setHP(-dmg);
+            doAction("fire a %s and hit the %s for %d damage", weapon.getName(), target.name, dmg);
+            if (target.getCurHP() <= 0) {
+                doAction("killed the %s", target.name);
+                gainXP(target);
+            }
+        } else {
+            doAction("miss the %s", target.name);
+        }
+    }
+    public void throwItem(Item item, int tx, int ty, int tz){
+        Location end = new Location(posX,posY,0);
         
+        for (Location p : new Line(posX, posY, tx, ty)){
+            if(!realTile(p.getX(),p.getY(),posZ).isPassable()){
+                break;
+            }
+            end = p;
+        }
+        tx = end.getX();
+        ty = end.getY();
+        
+        Actor target = findActor(tx,ty,tz);
+        
+        if(target != null){
+            thrownAttack(item, target);
+        }else{
+            doAction("throw the %s", item.getName());
+        }
+        unequip(item);
+        inventory.remove(item);
+        dungeon.addItemAt(item, tx, ty, tz);
+    }
+
+    public void pickUp() {
+        List<Item> itemsHere = dungeon.getItems(posX, posY, posZ);
+
         //if(itemsHere.size() == 1){
-            doAction("pick up a %s", itemsHere.get(0).getName());
-            Item thisItem = itemsHere.get(0);
-            dungeon.deleteItem(itemsHere, itemsHere.get(0), posX, posY, posZ);
-            inventory.add(thisItem);
+        doAction("pick up a %s", itemsHere.get(0).getName());
+        Item thisItem = itemsHere.get(0);
+        dungeon.deleteItem(itemsHere, itemsHere.get(0), posX, posY, posZ);
+        inventory.add(thisItem);
         //}
     }
+
     public void drop(Item item) {
         doAction("drop a " + item.getName());
         inventory.remove(item);
         dungeon.addItemAt(item, posX, posY, posZ);
         unequip(item);
     }
-    public void unequip(Item item){
-        if(item == null){
+
+    public void unequip(Item item) {
+        if (item == null) {
             return;
         }
-        
-        if(item == weapon){
+
+        if (item == weapon) {
             doAction("unequip a " + item.getName());
             weapon = null;
-        }
-        else if(item == chestArmor){
+        } else if (item == chestArmor) {
             doAction("take off a " + item.getName());
             chestArmor = null;
         }
@@ -208,16 +258,16 @@ public class Actor {
         // @TODO
         // Add the rest of the item unequip stuff
     }
-    public void equip(Item item){
-        if(item.getAtkVal() == 0 && item.getDefVal() == 0){
+
+    public void equip(Item item) {
+        if (item.getAtkVal() == 0 && item.getDefVal() == 0) {
             return;
         }
-        if(item.getType().equals("weapon")){
+        if (item.getType().equals("weapon")) {
             unequip(weapon);
             doAction("wield a " + item.getName());
             weapon = item;
-        }
-        else if(item.getType().equals("chestArmor")){
+        } else if (item.getType().equals("chestArmor")) {
             unequip(chestArmor);
             doAction("put on a " + item.getName());
             chestArmor = item;
@@ -283,13 +333,14 @@ public class Actor {
 
         return builder.toString().trim();
     }
-    public Inventory getInventory(){
+
+    public Inventory getInventory() {
         return inventory;
     }
 
     public int getAtkVal() {
         return attackVal + (weapon == null ? 0 : weapon.getAtkVal())
-        + (chestArmor == null ? 0 : chestArmor.getAtkVal());
+                + (chestArmor == null ? 0 : chestArmor.getAtkVal());
         // @TODO
         // Factor in other item attack values and properties
     }
@@ -299,8 +350,8 @@ public class Actor {
     }
 
     public int getDefVal() {
-        return defenseVal + (weapon == null ? 0 : weapon.getDefVal())
-        + (chestArmor == null ? 0 : chestArmor.getDefVal());
+        return defenseVal + dexmod + (weapon == null ? 0 : weapon.getDefVal())
+                + (chestArmor == null ? 0 : chestArmor.getDefVal());
         // @TODO
         // Factor in other item attack values and properties
     }
@@ -354,7 +405,15 @@ public class Actor {
     }
 
     public Tile lookAt(int x, int y, int z) {
-        return dungeon.tile(x, y, z);
+        if (hasSightOf(x, y, z)) {
+            return dungeon.tile(x, y, z);
+        } else {
+            return AI.rememberedTile(x, y, z);
+        }
+    }
+
+    public Tile realTile(int wx, int wy, int wz) {
+        return dungeon.tile(wx, wy, wz);
     }
 
     public Item getAmulet() {
@@ -508,13 +567,14 @@ public class Actor {
     public void setXp(int xp) {
         this.xp = xp;
     }
-    public void modXP(int x){
-        
+
+    public void modXP(int x) {
+
         xp += x;
-        
-        sendMessage("You %s %d xp", x < 0 ? "lose":"gain", x);
-        
-        while(xp > (int)(Math.pow(level, 1.5) * 20)){
+
+        sendMessage("You %s %d xp", x < 0 ? "lose" : "gain", x);
+
+        while (xp > (int) (Math.pow(level, 1.5) * 20)) {
             level++;
             doAction("advance to level %d", level);
             AI.onLevelUp();
@@ -529,12 +589,13 @@ public class Actor {
 
     private void gainXP(Actor occupant) {
         int xp = occupant.getTotalHP() + occupant.getAtkVal() + occupant.getDefVal() - level * 2;
-        
-        if(xp > 0){
+
+        if (xp > 0) {
             modXP(xp);
         }
     }
-    public void gainHP(int x){
+
+    public void gainHP(int x) {
         totalHP += x;
     }
 
@@ -557,7 +618,13 @@ public class Actor {
         con += 1;
         doAction("look a little healthier");
     }
-    
-    
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
 
 }

@@ -60,7 +60,7 @@ public class ActorAI {
         }
         
         for(Location p : new Line(actor.getPosX(), actor.getPosY(), x, y)){
-            if(actor.lookAt(p.getX(), p.getY(), z).isPassable() || p.getX() == x && p.getY() == y){
+            if(actor.realTile(p.getX(), p.getY(), z).isPassable() || p.getX() == x && p.getY() == y){
                 continue;
             }
             return false;
@@ -70,6 +70,11 @@ public class ActorAI {
 
     public void onLevelUp() {
         new LevelUpController().autoLevel(actor);
+        actor.setModifiers();
+    }
+
+    public Tile rememberedTile(int x, int y, int z) {
+        return Tile.unknown();
     }
 
 }

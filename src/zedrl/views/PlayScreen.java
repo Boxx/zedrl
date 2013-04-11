@@ -220,9 +220,18 @@ public class PlayScreen implements Screen, KeyListener {
                     break;
                 case KeyEvent.VK_W:
                     sub = new SwingEquipScreen(player,frame);
+                    break;
                 case KeyEvent.VK_I:
 
                     break;
+                case KeyEvent.VK_T:
+                    sub = new SwingThrowScreen(frame, player, player.getPosX() - getScrollX(), player.getPosY() - getScrollY());
+                    break;
+                case KeyEvent.VK_F:
+                    if(player.getWeapon() == null || player.getWeapon().getRangedAtkVal() == 0){
+                        player.sendMessage("You don't have a ranged weapon in your hands");
+                    }
+                    sub = new FireActionScreen(player, player.getPosX() - getScrollX(), player.getPosY() - getScrollY());
                 case KeyEvent.VK_G:
                     player.pickUp();
                     break;
@@ -302,6 +311,12 @@ public class PlayScreen implements Screen, KeyListener {
                 case '>':
                     player.moveBy(0, 0, 1);
                     break;
+                case '?':
+                    sub = new SwingHelpScreen(frame);
+                    break;
+                case ';':
+                    sub = new LookScreen(player, "Looking", player.getPosX() - getScrollX(), player.getPosY() - getScrollY());
+                    break;
             }
         }
         if(sub == null){
@@ -326,6 +341,9 @@ public class PlayScreen implements Screen, KeyListener {
         if (sub != null) {
             sub.displayOutput(display);
             displayMessages(messageQueue);
+        if(sub instanceof ThrowActionScreen){
+            display.setVisible(true);
+        }
         }else{
             display.setVisible(true);
         }

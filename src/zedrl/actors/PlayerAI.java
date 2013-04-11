@@ -43,6 +43,11 @@ public class PlayerAI extends ActorAI {
     public boolean canSee(int vx, int vy, int vz){
         return FOV.isVisable(vx, vy, vz);
     }
+
+    @Override
+    public Tile rememberedTile(int x, int y, int z) {
+        return FOV.getTile(x, y, z);
+    }
     
     
 }

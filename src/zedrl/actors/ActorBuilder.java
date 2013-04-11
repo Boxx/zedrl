@@ -34,6 +34,7 @@ public class ActorBuilder {
         player.setModifiers();
         player.equip(ib.getNewDagger());
         player.equip(ib.getNewClothRobe());
+        player.setDetails("The Zedman!");
         dungeon.addActor(player, 0);
         new PlayerAI(player, messageQueue, FOV);
         return player;
@@ -49,6 +50,7 @@ public class ActorBuilder {
         fungus.setDex(1);
         fungus.setCha(5);
         fungus.setModifiers();
+        fungus.setDetails("A putrid green fungus");
         dungeon.addActor(fungus, z);
         new FungusAI(fungus, this);
         return fungus;
@@ -65,6 +67,7 @@ public class ActorBuilder {
         goblin.setDex(8);
         goblin.setCha(8);
         goblin.setModifiers();
+        goblin.setDetails("A small reddish humanoid covered in dirt");
         goblin.equip(ib.getNewShortSword());
         dungeon.addActor(goblin, z);
         new GoblinAI(goblin, player);
@@ -84,6 +87,7 @@ public class ActorBuilder {
         orc.setCha(8);
         orc.equip(ib.getNewLeatherArmor());
         orc.equip(ib.getNewMace());
+        orc.setDetails("A large green humanoid");
         new OrcAI(orc,player);
         return orc;
     }
@@ -99,6 +103,7 @@ public class ActorBuilder {
         bat.setDex(6);
         bat.setCha(1);
         bat.setModifiers();
+        bat.setDetails("An extremely annoying flying rodent");
         dungeon.addActor(bat, z);
         new BatAI(bat);
         return bat;

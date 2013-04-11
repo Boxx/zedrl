@@ -23,7 +23,7 @@ import zedrl.actors.Item;
 public abstract class SwingItemBasedScreen extends JPanel implements Screen, KeyListener  {
     
     protected Actor player;
-    private String letters;
+    protected String letters;
     private JFrame frame;
     private SwingPane display;
     

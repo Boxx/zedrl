@@ -26,21 +26,21 @@ public class ItemBuilder {
     public Item placeNewDagger(int z){
         Item dagger = new Item(')',SColor.WHITE_OAK, "dagger", "weapon", false);
         dagger.setIsWearable(true);
-        dagger.setAtkVal(3);
+        dagger.setAtkVal(4);
         dungeon.addItemRand(dagger, z);
         return dagger;
     }
     public Item placeNewMace(int z){
         Item mace = new Item(')',SColor.ALOEWOOD_BROWN, "mace","weapon", false);
         mace.setIsWearable(true);
-        mace.setAtkVal(5);
+        mace.setAtkVal(6);
         dungeon.addItemRand(mace, z);
         return mace;
     }
     public Item placeNewShortSword(int z){
         Item shortsword = new Item(')',SColor.BRONZE, "shortsword","weapon", false);
         shortsword.setIsWearable(true);
-        shortsword.setAtkVal(4);
+        shortsword.setAtkVal(6);
         dungeon.addItemRand(shortsword, z);
         return shortsword;
     }
@@ -50,6 +50,13 @@ public class ItemBuilder {
         longsword.setAtkVal(8);
         dungeon.addItemRand(longsword, z);
         return longsword;
+    }
+    public Item placeNewShortBow(int z){
+        Item shortbow = new Item(')',SColor.YELLOW_GREEN, "shortbow","weapon", false);
+        shortbow.setIsWearable(true);
+        shortbow.setRangedAtkVal(6);
+        dungeon.addItemRand(shortbow, z);
+        return shortbow;
     }
     public Item placeNewClothRobe(int z){
         Item robe = new Item('[',SColor.AZUL, "cloth robe", "chestArmor", false);

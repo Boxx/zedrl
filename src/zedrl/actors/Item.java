@@ -19,6 +19,8 @@ public class Item {
     private int stacks;
     private int atkVal;
     private int defVal;
+    private int throwAtkVal;
+    private int rangedAtkVal;
     private String type;
     private boolean isWearable;
     private boolean isEquipped;
@@ -49,6 +51,31 @@ public class Item {
         this.defVal = defVal;
     }
 
+    public boolean isIsStackable() {
+        return isStackable;
+    }
+
+    public void setIsStackable(boolean isStackable) {
+        this.isStackable = isStackable;
+    }
+
+    public int getThrowAtkVal() {
+        return throwAtkVal;
+    }
+
+    public void setThrowAtkVal(int throwAtkVal) {
+        this.throwAtkVal = throwAtkVal;
+    }
+
+    public int getRangedAtkVal() {
+        return rangedAtkVal;
+    }
+
+    public void setRangedAtkVal(int rangedAtkVal) {
+        this.rangedAtkVal = rangedAtkVal;
+    }
+    
+    
     public boolean isWearable() {
         return isWearable;
     }
@@ -105,6 +132,19 @@ public class Item {
 
     public void setIsEquipped(boolean isEquipped) {
         this.isEquipped = isEquipped;
+    }
+
+    public String getDetails() {
+        String details = "";
+        
+        if(atkVal != 0){
+            details += "    damage: " + "1d" + atkVal;
+        }
+        if(defVal != 0){
+            details += "    AC: " + defVal;
+        }
+        
+        return details;
     }
     
     

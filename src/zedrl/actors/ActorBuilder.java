@@ -92,6 +92,21 @@ public class ActorBuilder {
         return orc;
     }
     
+    public Actor newOgre(int z, Actor player){
+        Actor ogre = new Actor(dungeon, 'O', SColor.DARK_KHAKI, "ogre", 50, 1, 1, 5);
+        ogre.setLevel(3);
+        ogre.setStr(16);
+        ogre.setWis(4);
+        ogre.setCon(12);
+        ogre.setIntel(4);
+        ogre.setDex(4);
+        ogre.setCha(4);
+        ogre.equip(ib.getNewMace());
+        ogre.setDetails("A large green humanoid");
+        new OrcAI(ogre,player);
+        return ogre;
+    }
+    
     public Actor newBat(int z){
         
         Actor bat = new Actor(dungeon, 'b', SColor.BROWNER, "bat", 5, 1, 1, 10);

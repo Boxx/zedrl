@@ -18,6 +18,21 @@ public class ItemBuilder {
     public ItemBuilder(Dungeon dungeon){
         this.dungeon = dungeon;
     }
+    public Item placeNewHealthPotion(int z){
+        Item healthpot = new Item('!', SColor.RED_PIGMENT, "health potion", "potion", true);
+        healthpot.setQuaffEffect(new Effect(1){
+                public void start(Actor actor){
+                    if(actor.getCurHP() == actor.getTotalHP()){
+                        return;
+                    }
+                    actor.setHP(20);
+                    actor.doAction("feel much better");
+                }
+        });
+        dungeon.addItemRand(healthpot, z);
+        return healthpot;
+    }
+    
     public Item placeNewStone(int z){
         Item stone = new Item(',', SColor.DOVE_FEATHER_GREY, "stone", "ammo", true);
         dungeon.addItemRand(stone, z);
@@ -27,6 +42,7 @@ public class ItemBuilder {
         Item dagger = new Item(')',SColor.WHITE_OAK, "dagger", "weapon", false);
         dagger.setIsWearable(true);
         dagger.setAtkVal(4);
+        dagger.setThrowAtkVal(10);
         dungeon.addItemRand(dagger, z);
         return dagger;
     }
@@ -50,6 +66,13 @@ public class ItemBuilder {
         longsword.setAtkVal(8);
         dungeon.addItemRand(longsword, z);
         return longsword;
+    }
+    public Item placeNewGreatClub(int z){
+        Item greatclub = new Item(')',SColor.BRIGHT_GOLD_BROWN, "great club", "weapon", false);
+        greatclub.setIsWearable(true);
+        greatclub.setAtkVal(10);
+        dungeon.addItemRand(greatclub, z);
+        return greatclub;
     }
     public Item placeNewShortBow(int z){
         Item shortbow = new Item(')',SColor.YELLOW_GREEN, "shortbow","weapon", false);

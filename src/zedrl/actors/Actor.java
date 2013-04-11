@@ -154,7 +154,36 @@ public class Actor {
             return null;
         }
     }
-
+    public void meleeAttack(Actor occupant){
+        genericAttack(occupant, getAtkVal(), "hit the %s for %d damage", occupant.name);
+    }
+    public void throwAttack(Item item, Actor occupant){
+        genericAttack(occupant, item.getThrowAtkVal(), "throw the %s at the %s and hit for %d damage", item.getName(), occupant.name);
+    }
+    /*
+    public void rangedAttack(Actor occupant){
+        genericAttack(occupant, getAtkVal(), "fire the %s at the %s and hit for %d damage", weapon.getName(), occupant.name);
+    }
+    */
+    private void genericAttack(Actor occupant, int atk, String verb, Object ... params){
+        int d20roll = Roller.randomInt(20);
+        int dmg = 0;
+        if(d20roll + strmod > occupant.defenseVal){
+            dmg = Roller.randomInt(1, atk + strmod);
+        }
+        Object[] params2 = new Object[params.length + 1];
+        System.arraycopy(params, 0, params2, 0, params.length);
+        params2[params2.length - 1] = dmg;
+        
+        doAction(verb, params2);
+        occupant.setHP(-dmg);
+        
+        if(occupant.getCurHP() <= 0){
+            doAction("killed the %s", occupant.name);
+            gainXP(occupant);
+        }
+    }
+    
     public void attack(Actor occupant) {
         /**
          * Hit Calculation

@@ -32,6 +32,8 @@ public class Item {
         this.type = type;
         this.isStackable = isStackable;
         this.stacks = 1;
+        this.throwAtkVal = 1;
+        
         
     }
 
@@ -145,6 +147,10 @@ public class Item {
         }
         
         return details;
+    }
+
+    void setQuaffEffect(Effect effect) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
     
     

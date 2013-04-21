@@ -58,6 +58,8 @@ public class Actor {
     private Item rightRing;
     private Item amulet;
     private String details;
+    private ArrayList<Effect> effects;
+    
 
     public Actor(Dungeon dungeon, char glyph, SColor color) {
         this.dungeon = dungeon;
@@ -77,6 +79,7 @@ public class Actor {
         this.visionRad = visionRad;
         this.inventory = new Inventory(25);
         this.ib = new ItemBuilder(dungeon);
+        this.effects = new ArrayList<>();
 
     }
 
@@ -121,6 +124,9 @@ public class Actor {
         Actor occupant = dungeon.getActor(posX + mx, posY + my, posZ + mz);
 
         if (this.name.equals("Zedman") && dungeon.getItems(posX + mx, posY + my, posZ + mz) != null) {
+            if(dungeon.getItems(posX + mx, posY + my, posZ + mz).size() > 1){
+                doAction("see several items here");
+            }
             doAction("see a " + dungeon.getItems(posX + mx, posY + my, posZ + mz).get(0).getName() + " here");
         }
         if (mz == 0 && occupant == null) {
@@ -130,7 +136,6 @@ public class Actor {
             AI.enterTile(posX + mx, posY + my, posZ + mz, targetTile);
         } else if (mz == 0 && occupant != null) {
             if (name.equals("Zedman") || occupant.name.equals("Zedman")) {
-                System.out.println("attacking");
                 attack(occupant);
             }
 
@@ -189,8 +194,8 @@ public class Actor {
          * Hit Calculation
          */
         int d20roll = Roller.randomInt(20);
-        if (d20roll + strmod > occupant.defenseVal) {
-            int dmg = Roller.randomInt(1, getAtkVal()) + strmod;
+        if (d20roll + strmod + (weapon != null ? weapon.getAtkBonus() : 0) > occupant.defenseVal) {
+            int dmg = Roller.randomInt(1, getAtkVal()) + strmod + (weapon != null ? weapon.getAtkBonus() : 0);
             occupant.setHP(-dmg);
             doAction("hit the %s for %d damage", occupant.name, dmg);
             if (occupant.getCurHP() <= 0) {
@@ -289,6 +294,9 @@ public class Actor {
     }
 
     public void equip(Item item) {
+        if (!inventory.contains(item)){
+            inventory.add(item);
+        }
         if (item.getAtkVal() == 0 && item.getDefVal() == 0) {
             return;
         }
@@ -305,9 +313,55 @@ public class Actor {
         // @TODO
         // Add the rest of item equip stuff
     }
-
+    
+    public void quaff(Item potion){
+        doAction("quaff a " + potion.getName());
+        consume(potion);
+    }
+    public void eat(Item food){
+        doAction("eat a " + food.getName());
+        consume(food);
+    }
+    public void consume(Item item){
+        
+        addEffect(item.getQuaffEffect());
+        
+        dispose(item);
+    }
     public void update() {
+        checkEffects();
         AI.update();
+        
+    }
+    private void die(){
+        Item corpse = new Item('%', color, name + " corpse", "corpse", false);
+        dungeon.addItemAt(corpse, posX, posY, posZ);
+        for(Item item : inventory.getItems()){
+            if(item != null){
+                drop(item);
+            }
+        }
+    }
+    private void addEffect(Effect effect){
+        if(effect == null){
+            return;
+        }else{
+            effect.applyEffect(this);
+            effects.add(effect);
+        }
+        
+    }
+    private void checkEffects(){
+        ArrayList<Effect> expired = new ArrayList<>();
+        
+        for(Effect effect : effects){
+            effect.update(this);
+            if (effect.expired()){
+                effect.endEffect(this);
+                expired.add(effect);
+            }
+        }
+        effects.removeAll(expired);
     }
 
     public boolean canEnter(int wx, int wy, int wz) {
@@ -315,9 +369,15 @@ public class Actor {
     }
 
     public void setHP(int value) {
-        curHP += value;
-
+        
+        if(curHP + value > totalHP){
+            curHP = totalHP;
+        }else{
+            curHP += value;
+        }
+        
         if (curHP < 1) {
+            die();
             dungeon.deleteActor(this);
         }
     }
@@ -380,7 +440,7 @@ public class Actor {
 
     public int getDefVal() {
         return defenseVal + dexmod + (weapon == null ? 0 : weapon.getDefVal())
-                + (chestArmor == null ? 0 : chestArmor.getDefVal());
+                + (chestArmor == null ? 0 : chestArmor.getDefVal() + chestArmor.getDefBonus());
         // @TODO
         // Factor in other item attack values and properties
     }
@@ -656,4 +716,13 @@ public class Actor {
         this.details = details;
     }
 
+    public ArrayList<Effect> getEffects() {
+        return effects;
+    }
+
+    private void dispose(Item item) {
+        inventory.remove(item);
+        unequip(item);
+    }
+    
 }

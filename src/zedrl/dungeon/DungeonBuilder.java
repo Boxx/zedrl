@@ -236,6 +236,7 @@ public class DungeonBuilder {
 
         if(levelCounter == 0){
             buildDownStairs();
+            buildExitStairs();
         }
         else if(levelCounter == dungeonDepth - 1){
             buildUpStairs();
@@ -243,6 +244,27 @@ public class DungeonBuilder {
             buildDownStairs();
             buildUpStairs();
         }
+    }
+    private void buildExitStairs(){
+        
+        int seedRoomUp1 = (int) (Math.random() * roomsAtLevel.length - 1);
+            int seedRoomUp2;
+            do {
+                seedRoomUp2 = (int) (Math.random() * roomsAtLevel.length - 1);
+            } while (seedRoomUp1 == seedRoomUp2);
+            
+            for (int i = 0; i < roomsAtLevel.length; i++) { // Room list iterator
+
+                if (i == seedRoomUp1 || i == seedRoomUp2){
+
+                    int width = roomsAtLevel[i].getBotRightCol() - roomsAtLevel[i].getTopLeftCol() - 1;
+                    int height = roomsAtLevel[i].getBotRightRow() - roomsAtLevel[i].getTopLeftRow() - 1;
+                    int stairX = (int) (Math.random() * width + roomsAtLevel[i].getTopLeftCol()) + 1;
+                    int stairY = (int) (Math.random() * height + roomsAtLevel[i].getTopLeftRow()) + 1;
+
+                    dungeonlevel[stairX][stairY] = Tile.up();
+                }
+            }
     }
     private void buildUpStairs(){
         

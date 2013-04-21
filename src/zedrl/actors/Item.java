@@ -18,12 +18,16 @@ public class Item {
     private boolean isStackable;
     private int stacks;
     private int atkVal;
+    private int atkBonus;
     private int defVal;
+    private int defBonus;
     private int throwAtkVal;
     private int rangedAtkVal;
     private String type;
     private boolean isWearable;
     private boolean isEquipped;
+    private Effect quaffEffect;
+    private Effect attackEffect;
 
     public Item(char glyph, SColor color, String name, String type, boolean isStackable) {
         this.glyph = glyph;
@@ -33,6 +37,8 @@ public class Item {
         this.isStackable = isStackable;
         this.stacks = 1;
         this.throwAtkVal = 1;
+        this.atkBonus = 0;
+        this.defBonus = 0;
         
         
     }
@@ -150,7 +156,35 @@ public class Item {
     }
 
     void setQuaffEffect(Effect effect) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        this.quaffEffect = effect;
+    }
+
+    public Effect getQuaffEffect() {
+        return quaffEffect;
+    }
+
+    public int getAtkBonus() {
+        return atkBonus;
+    }
+
+    public void setAtkBonus(int atkBonus) {
+        this.atkBonus = atkBonus;
+    }
+
+    public Effect getAttackEffect() {
+        return attackEffect;
+    }
+
+    public void setAttackEffect(Effect attackEffect) {
+        this.attackEffect = attackEffect;
+    }
+
+    public int getDefBonus() {
+        return defBonus;
+    }
+
+    public void setDefBonus(int defBonus) {
+        this.defBonus = defBonus;
     }
     
     

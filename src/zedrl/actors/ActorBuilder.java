@@ -75,9 +75,28 @@ public class ActorBuilder {
         
     }
     
+    public Actor newKobold(int z, Actor player){
+        
+        Actor kobold = new Actor(dungeon, 'k', SColor.GREEN, "kobold", 8, 1, 1, 8);
+        kobold.setLevel(1);
+        kobold.setStr(9);
+        kobold.setWis(9);
+        kobold.setCon(10);
+        kobold.setIntel(10);
+        kobold.setDex(13);
+        kobold.setCha(8);
+        kobold.setModifiers();
+        kobold.setDetails("A short reptilian humanoid with glowing red eyes");
+        kobold.equip(ib.getNewLeatherArmor());
+        kobold.equip(ib.getNewShortSword());
+        dungeon.addActor(kobold, z);
+        new GoblinAI(kobold, player);
+        return kobold;
+    }
+    
     public Actor newOrc(int z, Actor player){
         
-        Actor orc = new Actor(dungeon, 'o', SColor.GREEN, "orc", 30, 1,1,8);
+        Actor orc = new Actor(dungeon, 'o', SColor.GREEN_BAMBOO, "orc", 30, 1,1,8);
         orc.setLevel(1);
         orc.setStr(8);
         orc.setWis(4);
@@ -88,6 +107,7 @@ public class ActorBuilder {
         orc.equip(ib.getNewLeatherArmor());
         orc.equip(ib.getNewMace());
         orc.setDetails("A large green humanoid");
+        dungeon.addActor(orc, z);
         new OrcAI(orc,player);
         return orc;
     }
@@ -101,8 +121,9 @@ public class ActorBuilder {
         ogre.setIntel(4);
         ogre.setDex(4);
         ogre.setCha(4);
-        ogre.equip(ib.getNewMace());
+        ogre.equip(ib.getNewGreatClub());
         ogre.setDetails("A large green humanoid");
+        dungeon.addActor(ogre, z);
         new OrcAI(ogre,player);
         return ogre;
     }

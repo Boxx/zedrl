@@ -4,38 +4,59 @@
  */
 package zedrl.views;
 
-import asciiPanel.AsciiPanel;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import javax.swing.JFrame;
+import squidpony.squidgrid.gui.swing.SwingPane;
 
 /**
  *
  * @author Brandon
  */
-class WinScreen implements Screen
-{
-
-    public WinScreen()
-    {
+class WinScreen implements Screen, KeyListener {
+    
+    private JFrame frame;
+    public WinScreen(JFrame frame) {
+        this.frame = frame;
     }
 
     @Override
-    public void displayOutput(AsciiPanel term)
-    {
-        term.write("You won the game!", 1, 1);
-        term.writeCenter("Press [ENTER] to play this awesome game again", 22);
-
+    public void displayOutput(SwingPane display) {
+        for(int i = 0; i < display.getGridHeight(); i++){
+            for(int j = 0; j < display.getGridWidth(); j++){
+                display.clearCell(j, i);
+            }
+        }
+        display.placeHorizontalString(5, 5, "You won the game!", Color.WHITE, Color.BLACK);
+        display.placeHorizontalString(5, 6, "Press [Enter] to play again", Color.WHITE, Color.BLACK);
+        display.refresh();
     }
 
     @Override
-    public Screen respondToUserInput(KeyEvent key)
-    {
-        if (key.getKeyCode() == KeyEvent.VK_ENTER)
-        {
-            return new PlayScreen();
-        } else
-        {
+    public Screen respondToUserInput(KeyEvent key) {
+        if (key.getKeyCode() == KeyEvent.VK_ENTER){
+            return new PlayScreen(frame);
+        }else{
             return this;
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            respondToUserInput(e);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        
     }
     
 }

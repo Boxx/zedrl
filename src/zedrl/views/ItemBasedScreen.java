@@ -57,7 +57,7 @@ public abstract class ItemBasedScreen implements Screen, KeyListener {
             }
             display.placeHorizontalString(x, y++, line, Color.WHITE, Color.BLACK);
         }
-        player.sendMessage("What would you like to " + getVerb() + "? [Select item to drop by pressing its associated key]");
+        player.sendMessage("What would you like to " + getVerb() + "? [Select item by pressing its associated key]");
         display.repaint();
         display.refresh();
         
@@ -97,7 +97,7 @@ public abstract class ItemBasedScreen implements Screen, KeyListener {
         
     }
 
-    private ArrayList<String> getList() {
+    public ArrayList<String> getList() {
         ArrayList<String> lines = new ArrayList<>();
         Item[] inventory = player.getInventory().getItems();
         

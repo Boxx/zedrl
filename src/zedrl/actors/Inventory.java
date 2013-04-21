@@ -63,5 +63,12 @@ public class Inventory {
         }
 
     }
-
+    public boolean contains(Item item){
+        for(Item search : items){
+            if(search == item){
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -14,12 +14,11 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import squidpony.squidcolor.SColor;
 import squidpony.squidgrid.gui.swing.SwingPane;
-import zedrl.actors.Actor;
-import zedrl.actors.ActorBuilder;
-import zedrl.actors.FieldOfView;
-import zedrl.actors.ItemBuilder;
+import zedrl.actors.*;
 import zedrl.dungeon.Dungeon;
 import zedrl.dungeon.DungeonBuilder;
+import zedrl.dungeon.Tile;
+import zedrl.utilities.Roller;
 
 /**
  *
@@ -94,15 +93,23 @@ public class PlayScreen implements Screen, KeyListener {
         player = ab.newPlayer(messageQueue, FOV);
 
         for (int z = 0; z < dungeon.getDepth(); z++) {
-            for (int i = 0; i < 10; i++) {
-                ab.newFungus(z);
+            if (z < 3){
+                for (int i = 0; i < 10; i++) {
+                    ab.newFungus(z);
+                }
             }
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 5; i++) {
                 ab.newBat(z);
             }
-            if(z > 0){
+            if(z > 0 && z < 5){
                 for (int i = 0; i < 5; i++){
                     ab.newGoblin(z, player);
+                }
+                ab.newOgre(z, player);
+            }
+            if(z > 4){
+                for (int i = 0; i < 5; i++){
+                    ab.newOrc(z, player);
                 }
             }
             
@@ -122,6 +129,20 @@ public class PlayScreen implements Screen, KeyListener {
                 ib.pickRandWeapon(z);
             }
         }
+        for (int z = 0; z < dungeon.getDepth(); z++){
+            for(int i = 0; i < 3; i++){
+                ib.pickRandPotion(z);
+            }
+        }
+        for(int z = 0; z < dungeon.getDepth(); z++){
+            if (Roller.chance(25)){
+                ib.pickRandMagicItem(z);
+            }
+            if (Roller.chance(10)){
+                ib.pickRandMagicItem(z);
+            }
+        }
+        ib.placeNewQuesoOfDoom(dungeon.getDepth() - 1);
     }
 
     private void displayDungeon(SwingPane display, int left, int top) {
@@ -218,6 +239,9 @@ public class PlayScreen implements Screen, KeyListener {
                     //sub = new DropItemScreen(player, frame);
                     sub = new SwingDropScreen(player,frame);
                     break;
+                case KeyEvent.VK_Q:
+                    sub = new SwingQuaffScreen(player,frame);
+                    break;
                 case KeyEvent.VK_W:
                     sub = new SwingEquipScreen(player,frame);
                     break;
@@ -235,9 +259,9 @@ public class PlayScreen implements Screen, KeyListener {
                 case KeyEvent.VK_G:
                     player.pickUp();
                     break;
-                case KeyEvent.VK_COMMA:
-                    player.pickUp();
-                    break;
+                //case KeyEvent.VK_COMMA:
+               //     player.pickUp();
+                //    break;
                 case KeyEvent.VK_NUMPAD4:
                     player.moveBy(-1, 0, 0);
                     break;
@@ -306,8 +330,12 @@ public class PlayScreen implements Screen, KeyListener {
             }
             switch (key.getKeyChar()) {
                 case '<':
-                    player.moveBy(0, 0, -1);
-                    break;
+                    if(playerExiting()){
+                        return playerExitDungeon();
+                    }else{
+                        player.moveBy(0, 0, -1);
+                        break;
+                    }
                 case '>':
                     player.moveBy(0, 0, 1);
                     break;
@@ -322,13 +350,28 @@ public class PlayScreen implements Screen, KeyListener {
         if(sub == null){
             dungeon.update();
         }
+        if(player.getCurHP() < 1){
+            frame.remove(statusPanel);
+            frame.remove(infoPanel);
+            return new DeathScreen(frame);
+        }
         
         //displayOutput();
         //display.refresh();
         return this;
 
     }
-
+    private boolean playerExiting(){
+        return player.getPosZ() == 0 && dungeon.tile(player.getPosX(), player.getPosY(), player.getPosZ()).isUpStair();
+    }
+    private Screen playerExitDungeon(){
+        for(Item item : player.getInventory().getItems()){
+            if(item != null && item.getType().equals("victory")){
+                return new WinScreen(frame);
+            }
+        }
+        return new DeathScreen(frame);
+    }
     @Override
     public void displayOutput(SwingPane display) {
         

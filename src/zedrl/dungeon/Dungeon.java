@@ -47,6 +47,7 @@ public class Dungeon {
         return width;
     }
     public List<Item> getItems(int x, int y, int z){
+        
         return items[x][y][z];
     }
 

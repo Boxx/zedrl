@@ -272,7 +272,13 @@ public class Actor {
     public void drop(Item item) {
         doAction("drop a " + item.getName());
         inventory.remove(item);
-        dungeon.addItemAt(item, posX, posY, posZ);
+        if(item.isStackable()){
+            Item unstackedItem = item.getCopy();
+            dungeon.addItemAt(unstackedItem, posX, posY, posZ);
+        }else{
+            dungeon.addItemAt(item, posX, posY, posZ);
+        }
+        
         unequip(item);
     }
 

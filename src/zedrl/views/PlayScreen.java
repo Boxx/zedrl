@@ -367,6 +367,8 @@ public class PlayScreen implements Screen, KeyListener {
     private Screen playerExitDungeon(){
         for(Item item : player.getInventory().getItems()){
             if(item != null && item.getType().equals("victory")){
+                frame.remove(statusPanel);
+                frame.remove(infoPanel);
                 return new WinScreen(frame);
             }
         }

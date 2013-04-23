@@ -42,6 +42,9 @@ public class Item {
         
         
     }
+    public Item getCopy(){
+        return new Item(glyph,color,name,type,isStackable);
+    }
 
     public int getAtkVal() {
         return atkVal;

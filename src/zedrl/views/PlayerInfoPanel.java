@@ -41,7 +41,7 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
         }else{
             weaponField.setText("");
         }
-        
+        levelText.setText(Integer.toString(player.getPosZ() + 1));
 
     }
     /**
@@ -69,6 +69,7 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
         jProgressBar1 = new javax.swing.JProgressBar();
         jLabel9 = new javax.swing.JLabel();
         hpLabel = new javax.swing.JLabel();
+        levelText = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(0, 0, 0));
         setForeground(new java.awt.Color(255, 255, 255));
@@ -110,11 +111,14 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
         jLabel15.setText("Mana");
 
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("XP:");
+        jLabel9.setText("DLVL:");
 
         hpLabel.setBackground(new java.awt.Color(0, 0, 0));
         hpLabel.setForeground(new java.awt.Color(255, 255, 255));
         hpLabel.setText("jLabel10");
+
+        levelText.setForeground(new java.awt.Color(255, 255, 255));
+        levelText.setText("jLabel10");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -123,7 +127,6 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel8)
                             .addComponent(jLabel7)
@@ -138,9 +141,6 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
                             .addComponent(chestField)
                             .addComponent(helmField)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(84, 84, 84)
-                        .addComponent(jLabel9))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel15)
@@ -150,8 +150,12 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(hpBar, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(37, Short.MAX_VALUE))
+                            .addComponent(hpBar, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(levelText)))))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,9 +170,11 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel15)
                     .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34)
-                .addComponent(jLabel9)
-                .addGap(11, 11, 11)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(levelText))
+                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(helmField))
@@ -207,6 +213,7 @@ public class PlayerInfoPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JLabel levelText;
     private javax.swing.JLabel weaponField;
     // End of variables declaration//GEN-END:variables
 }

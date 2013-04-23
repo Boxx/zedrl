@@ -53,6 +53,7 @@ public class Inventory {
                     return;
                 }
             }
+            
         } else {
             for (int i = 0; i < items.length; i++) {
                 if (items[i] == item) {

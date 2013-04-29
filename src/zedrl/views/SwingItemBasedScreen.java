@@ -53,7 +53,7 @@ public abstract class SwingItemBasedScreen extends JPanel implements Screen, Key
         }
         for (String line : lines){
             
-            text.append(line + "\n");
+            text.append("   " + line + "\n");
             
         }
         player.sendMessage("What would you like to " + getVerb() + "? [Select item to drop by pressing its associated key]");

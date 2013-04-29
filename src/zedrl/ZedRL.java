@@ -31,13 +31,14 @@ public class ZedRL extends JFrame implements KeyListener
      */
     public ZedRL()
     {
-        super();
+        
+        super("ZedRL");
         getContentPane().setBackground(Color.black);
         display = new SwingPane(50,24, new Font("Arial Black", Font.PLAIN, 14));
         setLayout(new BorderLayout());
         add(display);
         pack();
-        screen = new StartScreen(this);
+        screen = new PlayScreen(this);
         addKeyListener(this);
         repaint();
         

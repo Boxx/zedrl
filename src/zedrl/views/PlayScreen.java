@@ -66,7 +66,12 @@ public class PlayScreen implements Screen, KeyListener {
         frame.add(statusPanel, BorderLayout.SOUTH); 
         frame.pack();
         frame.revalidate();
-        frame.repaint();
+        player.sendMessage("Welcome to ZedRL!");
+        player.sendMessage("Descend to the final level of the dungeon and return with the Queso of Doom.");
+        player.sendMessage("If you are new to roguelikes or ZedRL, press [ ? ] to get some help");
+        player.sendMessage(" ");
+   
+        //frame.repaint();
 
 
         /*
@@ -104,6 +109,7 @@ public class PlayScreen implements Screen, KeyListener {
             if(z > 0 && z < 5){
                 for (int i = 0; i < 5; i++){
                     ab.newGoblin(z, player);
+                    ab.newKobold(z, player);
                 }
                 ab.newOgre(z, player);
             }
@@ -322,10 +328,12 @@ public class PlayScreen implements Screen, KeyListener {
                 case KeyEvent.VK_N:
                     player.moveBy(1, 1, 0);
                     break;
-                case KeyEvent.VK_PERIOD: // Waits a turn
-                    dungeon.update();
+                case KeyEvent.VK_PERIOD:
+                case KeyEvent.VK_NUMPAD5:   // Waits a turn
+                    player.regenHP();
                     player.sendMessage("You wait a turn");
                     break;
+                
 
             }
             switch (key.getKeyChar()) {
@@ -372,6 +380,8 @@ public class PlayScreen implements Screen, KeyListener {
                 return new WinScreen(frame);
             }
         }
+        frame.remove(statusPanel);
+        frame.remove(infoPanel);
         return new DeathScreen(frame);
     }
     @Override

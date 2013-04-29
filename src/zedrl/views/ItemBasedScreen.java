@@ -45,7 +45,7 @@ public abstract class ItemBasedScreen implements Screen, KeyListener {
         
         ArrayList<String> lines = getList();
         int y = 4;
-        int x = 1;
+        int x = 3;
         if (lines.size() > 0){
             
             clearDisplay(display);

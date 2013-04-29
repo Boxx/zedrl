@@ -59,6 +59,8 @@ public class Actor {
     private Item amulet;
     private String details;
     private ArrayList<Effect> effects;
+    private int regenOverTime;
+    private int regenCD;
     
 
     public Actor(Dungeon dungeon, char glyph, SColor color) {
@@ -80,6 +82,7 @@ public class Actor {
         this.inventory = new Inventory(25);
         this.ib = new ItemBuilder(dungeon);
         this.effects = new ArrayList<>();
+        this.regenOverTime = 10;
 
     }
 
@@ -94,6 +97,30 @@ public class Actor {
 
     }
 
+    public int getRegenCD() {
+        return regenCD;
+    }
+
+    public void setRegenCD(int regenCD) {
+        this.regenCD = regenCD;
+    }
+
+    public int getRegenOverTime() {
+        return regenOverTime;
+    }
+
+    public void setRegenOverTime(int regenOverTime) {
+        this.regenOverTime += regenOverTime;
+    }
+    
+    public void regenHP(){
+        regenCD -= regenOverTime;
+        if(regenCD < 0){
+            setHP(1);
+            regenCD += 100;
+        }
+    }
+    
     public void moveBy(int mx, int my, int mz) {
         if (mx == 0 && my == 0 && mz == 0) {
             return;
@@ -262,10 +289,15 @@ public class Actor {
         List<Item> itemsHere = dungeon.getItems(posX, posY, posZ);
 
         //if(itemsHere.size() == 1){
-        doAction("pick up a %s", itemsHere.get(0).getName());
-        Item thisItem = itemsHere.get(0);
-        dungeon.deleteItem(itemsHere, itemsHere.get(0), posX, posY, posZ);
-        inventory.add(thisItem);
+        if (itemsHere != null){
+            doAction("pick up a %s", itemsHere.get(0).getName());
+            Item thisItem = itemsHere.get(0);
+            dungeon.deleteItem(itemsHere, itemsHere.get(0), posX, posY, posZ);
+            inventory.add(thisItem);
+        }else{
+            doAction("grasp at nothing");
+        }
+        
         //}
     }
 

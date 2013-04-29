@@ -45,13 +45,16 @@ public class Inventory {
     public void remove(Item item) {
         if (item.isStackable()) {
             for (int i = 0; i < items.length; i++) {
-                if (items[i].getName().equals(item.getName())) {
-                    items[i].removeStack();
+                if (items[i] != null){
+                    if (items[i].getName().equals(item.getName())) {
+                        items[i].removeStack();
                     if (items[i].getStacks() == 0) {
                         items[i] = null;
                     }
                     return;
+                    }
                 }
+                
             }
             
         } else {

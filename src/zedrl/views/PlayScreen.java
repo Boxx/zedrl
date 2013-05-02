@@ -44,6 +44,7 @@ public class PlayScreen implements Screen, KeyListener {
     private int depth;
 
     public PlayScreen(JFrame frame) {
+        
         messageQueue = new ArrayList<>();
         createDungeon();
         screenW = 50;
@@ -380,9 +381,8 @@ public class PlayScreen implements Screen, KeyListener {
                 return new WinScreen(frame);
             }
         }
-        frame.remove(statusPanel);
-        frame.remove(infoPanel);
-        return new DeathScreen(frame);
+        player.sendMessage("You begin to ascend to the surface, but you feel like you are forgetting something and turn back.");
+        return this;
     }
     @Override
     public void displayOutput(SwingPane display) {
@@ -394,11 +394,12 @@ public class PlayScreen implements Screen, KeyListener {
         displayStats();
         displayMessages(messageQueue);
         if (sub != null) {
+            if(sub instanceof TargetingScreen){
+                display.setVisible(true);
+            }
             sub.displayOutput(display);
             displayMessages(messageQueue);
-        if(sub instanceof ThrowActionScreen){
-            display.setVisible(true);
-        }
+            
         }else{
             display.setVisible(true);
         }
